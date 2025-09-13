@@ -59,7 +59,7 @@ export default async function StudentProfilePage({
             <CardHeader className="flex flex-row items-center gap-4">
               <Avatar className="h-16 w-16 border">
                 <AvatarImage src={student.avatar} alt={student.name} />
-                <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback>{student.name ? student.name.charAt(0) : '?'}</AvatarFallback>
               </Avatar>
               <div className="grid gap-1">
                 <CardTitle className="text-2xl">{student.name}</CardTitle>

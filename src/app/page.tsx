@@ -86,7 +86,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalCourses}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs textmuted-foreground">
               Available learning modules
             </p>
           </CardContent>
@@ -122,30 +122,38 @@ export default async function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {students
-                  .sort((a, b) => b.overallScore - a.overallScore)
-                  .slice(0, 5)
-                  .map((student) => (
-                    <TableRow key={student.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage
-                              src={student.avatar}
-                              alt={student.name}
-                            />
-                            <AvatarFallback>
-                              {student.name.charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="font-medium">{student.name}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {student.overallScore}%
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                {students.length > 0 ? (
+                  students
+                    .sort((a, b) => b.overallScore - a.overallScore)
+                    .slice(0, 5)
+                    .map((student) => (
+                      <TableRow key={student.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage
+                                src={student.avatar}
+                                alt={student.name}
+                              />
+                              <AvatarFallback>
+                                {student.name.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="font-medium">{student.name}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {student.overallScore}%
+                        </TableCell>
+                      </TableRow>
+                    ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={2} className="h-24 text-center">
+                      No student data available.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>
