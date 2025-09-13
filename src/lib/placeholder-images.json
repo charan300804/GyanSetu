@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "student-1",
+      "description": "Avatar for Aarav Sharma",
+      "imageUrl": "https://picsum.photos/seed/1/100/100",
+      "imageHint": "boy student"
+    },
+    {
+      "id": "student-2",
+      "description": "Avatar for Priya Kaur",
+      "imageUrl": "https://picsum.photos/seed/2/100/100",
+      "imageHint": "girl student"
+    },
+    {
+      "id": "student-3",
+      "description": "Avatar for Rohan Singh",
+      "imageUrl": "https://picsum.photos/seed/3/100/100",
+      "imageHint": "boy student"
+    },
+    {
+      "id": "student-4",
+      "description": "Avatar for Anika Gupta",
+      "imageUrl": "https://picsum.photos/seed/4/100/100",
+      "imageHint": "girl student"
+    },
+    {
+      "id": "student-5",
+      "description": "Avatar for Ishaan Verma",
+      "imageUrl": "https://picsum.photos/seed/5/100/100",
+      "imageHint": "boy student"
+    },
+    {
+      "id": "student-6",
+      "description": "Avatar for Diya Patel",
+      "imageUrl": "https://picsum.photos/seed/6/100/100",
+      "imageHint": "girl student"
+    },
+    {
+      "id": "student-7",
+      "description": "Avatar for Kabir Yadav",
+      "imageUrl": "https://picsum.photos/seed/7/100/100",
+      "imageHint": "boy student"
+    },
+    {
+      "id": "student-8",
+      "description": "Avatar for Zara Khan",
+      "imageUrl": "https://picsum.photos/seed/8/100/100",
+      "imageHint": "girl student"
+    }
+  ]
 }
