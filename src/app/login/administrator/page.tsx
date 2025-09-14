@@ -1,11 +1,47 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+"use client";
+
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { login } from "@/lib/actions";
 import { ArrowLeft, UserCheck, UserCog, UserTie } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function AdministratorLoginPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleLogin = async (role: "teacher" | "faculty" | "principal") => {
+    // In a real app, you'd have a specific login form for each administrator type.
+    // For this prototype, we'll simulate a successful login and redirect.
+    const result = await login(`${role}@example.com`, "password", role);
+
+    if (result.success) {
+      toast({
+        title: "Login Successful",
+        description: `Redirecting to ${role} dashboard...`,
+      });
+      if (role === "teacher") router.push("/");
+      if (role === "faculty") router.push("/courses");
+      if (role === "principal") router.push("/principal/dashboard");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: result.error,
+      });
+    }
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="flex min-h-screen items-center justify-center bg-background">
       <Card className="w-full max-w-md mx-4">
         <CardHeader>
           <div className="flex items-center gap-4 mb-4">
@@ -16,29 +52,36 @@ export default function AdministratorLoginPage() {
               </Link>
             </Button>
             <div className="flex-1">
-                <CardTitle className="text-2xl font-bold">Administrator Login</CardTitle>
-                <CardDescription>Select your role to continue</CardDescription>
+              <CardTitle className="text-2xl font-bold">
+                Administrator Login
+              </CardTitle>
+              <CardDescription>Select your role to continue</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button className="w-full h-14 text-lg" asChild>
-            <Link href="/">
-              <UserCheck className="mr-2 h-6 w-6" />
-              Class Teacher / Mentor
-            </Link>
+          <Button
+            className="w-full h-14 text-lg"
+            onClick={() => handleLogin("teacher")}
+          >
+            <UserCheck className="mr-2 h-6 w-6" />
+            Class Teacher / Mentor
           </Button>
-          <Button className="w-full h-14 text-lg" variant="secondary" asChild>
-            <Link href="/courses">
-              <UserCog className="mr-2 h-6 w-6" />
-              Subject Teacher / Faculty
-            </Link>
+          <Button
+            className="w-full h-14 text-lg"
+            variant="secondary"
+            onClick={() => handleLogin("faculty")}
+          >
+            <UserCog className="mr-2 h-6 w-6" />
+            Subject Teacher / Faculty
           </Button>
-          <Button className="w-full h-14 text-lg" variant="secondary" asChild>
-            <Link href="/principal/dashboard">
-              <UserTie className="mr-2 h-6 w-6" />
-              Principal
-            </Link>
+          <Button
+            className="w-full h-14 text-lg"
+            variant="secondary"
+            onClick={() => handleLogin("principal")}
+          >
+            <UserTie className="mr-2 h-6 w-6" />
+            Principal
           </Button>
         </CardContent>
       </Card>
