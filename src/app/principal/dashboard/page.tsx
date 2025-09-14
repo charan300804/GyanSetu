@@ -26,6 +26,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { getStudents, getSummaryStats } from '@/lib/data';
+import { StudentPerformanceChart } from '@/components/student-performance-chart';
 
 export default async function PrincipalDashboard() {
   const students = await getStudents();
@@ -95,7 +96,8 @@ export default async function PrincipalDashboard() {
           </CardContent>
         </Card>
       </div>
-      <Card>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      <Card className="lg:col-span-4">
         <CardHeader className="flex flex-row items-center">
           <div className="grid gap-2">
             <CardTitle>Class 10A Overview</CardTitle>
@@ -183,6 +185,20 @@ export default async function PrincipalDashboard() {
           </Table>
         </CardContent>
       </Card>
+      <div className="lg:col-span-3 grid auto-rows-max gap-4">
+        <Card>
+            <CardHeader>
+              <CardTitle>Class 10A Performance</CardTitle>
+              <CardDescription>
+                Distribution of student scores in Class 10A.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <StudentPerformanceChart />
+            </CardContent>
+          </Card>
+      </div>
+      </div>
     </main>
   );
 }

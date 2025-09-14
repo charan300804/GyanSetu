@@ -1,10 +1,8 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   ArrowUpRight,
   BookOpenText,
   CheckCircle2,
-  QrCode,
   Users,
 } from 'lucide-react';
 
@@ -28,6 +26,8 @@ import {
 } from '@/components/ui/table';
 import { getStudents, getSummaryStats } from '@/lib/data';
 import { ScanQrCodeDialog } from '@/components/scan-qr-code-dialog';
+import { StudentPerformanceChart } from '@/components/student-performance-chart';
+import { ClassAttendanceChart } from '@/components/class-attendance-chart';
 
 export default async function DashboardPage() {
   const students = await getStudents();
@@ -96,97 +96,123 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-      <Card>
-        <CardHeader className="flex flex-row items-center">
-          <div className="grid gap-2">
-            <CardTitle>Class 10A Students</CardTitle>
-            <CardDescription>
-              Manage your students and view their progress.
-            </CardDescription>
-          </div>
-          <div className="ml-auto flex items-center gap-2">
-             <ScanQrCodeDialog />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Student</TableHead>
-                <TableHead className="hidden md:table-cell">
-                  Attendance
-                </TableHead>
-                <TableHead className="hidden md:table-cell">
-                  Overall Score
-                </TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {students.length > 0 ? (
-                students
-                  .sort((a, b) => b.overallScore - a.overallScore)
-                  .map((student) => (
-                    <TableRow key={student.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarImage
-                              src={student.avatar}
-                              alt={student.name}
-                            />
-                            <AvatarFallback>
-                              {student.name.charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="grid gap-0.5">
-                            <div className="font-medium">{student.name}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {student.email}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="lg:col-span-4">
+          <CardHeader className="flex flex-row items-center">
+            <div className="grid gap-2">
+              <CardTitle>Class 10A Students</CardTitle>
+              <CardDescription>
+                Manage your students and view their progress.
+              </CardDescription>
+            </div>
+            <div className="ml-auto flex items-center gap-2">
+              <ScanQrCodeDialog />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Student</TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Attendance
+                  </TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Overall Score
+                  </TableHead>
+                  <TableHead>
+                    <span className="sr-only">Actions</span>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {students.length > 0 ? (
+                  students
+                    .sort((a, b) => b.overallScore - a.overallScore)
+                    .map((student) => (
+                      <TableRow key={student.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-9 w-9">
+                              <AvatarImage
+                                src={student.avatar}
+                                alt={student.name}
+                              />
+                              <AvatarFallback>
+                                {student.name.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="grid gap-0.5">
+                              <div className="font-medium">{student.name}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {student.email}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        <Badge
-                          variant={
-                            student.attendance > 90 ? 'default' : 'secondary'
-                          }
-                          className={
-                            student.attendance < 80
-                              ? 'bg-red-100 text-red-800'
-                              : ''
-                          }
-                        >
-                          {student.attendance}%
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {student.overallScore}%
-                      </TableCell>
-                      <TableCell>
-                        <Button asChild variant="outline" size="sm">
-                          <Link href={`/student/${student.id}`}>
-                            View Profile
-                            <ArrowUpRight className="h-4 w-4 ml-2" />
-                          </Link>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} className="h-24 text-center">
-                    No student data available.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <Badge
+                            variant={
+                              student.attendance > 90 ? 'default' : 'secondary'
+                            }
+                            className={
+                              student.attendance < 80
+                                ? 'bg-red-100 text-red-800'
+                                : ''
+                            }
+                          >
+                            {student.attendance}%
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {student.overallScore}%
+                        </TableCell>
+                        <TableCell>
+                          <Button asChild variant="outline" size="sm">
+                            <Link href={`/student/${student.id}`}>
+                              View Profile
+                              <ArrowUpRight className="h-4 w-4 ml-2" />
+                            </Link>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-24 text-center">
+                      No student data available.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+        <div className="lg:col-span-3 grid auto-rows-max gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Overall Performance</CardTitle>
+              <CardDescription>
+                Distribution of student scores in Class 10A.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <StudentPerformanceChart />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Class Attendance</CardTitle>
+              <CardDescription>
+                Attendance rates for each student.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ClassAttendanceChart />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </main>
   );
 }
