@@ -8,13 +8,13 @@ export default function CoursesPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Manage Courses</CardTitle>
+            <CardTitle>Manage Courses & Modules</CardTitle>
             <CardDescription>
-              View, create, and assign learning modules.
+              Create, view, and edit learning modules for your subjects.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-4">This section will allow teachers to manage courses and modules for their students.</p>
+            <p className="text-muted-foreground mb-4">This section allows faculty to manage courses and modules. You can create new courses and upload lesson materials.</p>
             <Button>Create New Course</Button>
           </CardContent>
         </Card>
@@ -22,13 +22,13 @@ export default function CoursesPage() {
           <CardHeader>
             <CardTitle>Upload Content</CardTitle>
             <CardDescription>
-              Share timetables and notes with your class.
+              Upload video lessons, notes, and other materials for your modules.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
              <Button variant="outline">
                 <Upload className="mr-2 h-4 w-4" />
-                Upload Timetable
+                Upload Video Lesson
             </Button>
              <Button variant="outline">
                 <Upload className="mr-2 h-4 w-4" />

@@ -1,4 +1,5 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { EngagementChart } from "@/components/engagement-chart";
 
 export default function ProgressPage() {
   return (
@@ -7,11 +8,11 @@ export default function ProgressPage() {
         <CardHeader>
           <CardTitle>Progress Tracking</CardTitle>
           <CardDescription>
-            Monitor overall student and class performance.
+            Monitor overall student and class performance. Student progress is updated when a Class Teacher scans their QR code.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p>This area will provide a comprehensive overview of student progress, class-wide performance metrics, and attendance records. It's designed to give educators the insights they need to support their students effectively.</p>
+           <EngagementChart />
         </CardContent>
       </Card>
     </main>
