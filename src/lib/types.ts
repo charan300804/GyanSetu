@@ -27,3 +27,30 @@ export type Performance = {
   progress: number;
   modules: ModuleResult[];
 };
+
+export type TimetableEntry = {
+  day: string;
+  periods: {
+    time: string;
+    subject: string;
+    teacher: string;
+  }[];
+};
+
+export type Assignment = {
+  id: string;
+  subject: string;
+  title: string;
+  dueDate: string;
+  completed: boolean;
+};
+
+export type LessonVideo = {
+  id: string;
+  title: string;
+  subject: string;
+  teacher: string;
+  thumbnailUrl: string;
+  videoUrl: string;
+  watched: boolean;
+};

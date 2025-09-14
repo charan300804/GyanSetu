@@ -23,19 +23,19 @@ export default function AdministratorLoginPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <Button className="w-full h-14 text-lg" asChild>
-            <Link href="#">
+            <Link href="/">
               <UserCheck className="mr-2 h-6 w-6" />
               Class Teacher / Mentor
             </Link>
           </Button>
           <Button className="w-full h-14 text-lg" variant="secondary" asChild>
-            <Link href="#">
+            <Link href="/">
               <UserCog className="mr-2 h-6 w-6" />
               Subject Teacher / Faculty
             </Link>
           </Button>
           <Button className="w-full h-14 text-lg" variant="secondary" asChild>
-            <Link href="#">
+            <Link href="/">
               <UserTie className="mr-2 h-6 w-6" />
               Principal
             </Link>

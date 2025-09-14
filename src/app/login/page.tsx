@@ -12,7 +12,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <Button className="w-full h-14 text-lg" asChild>
-            <Link href="#">
+            <Link href="/student/dashboard">
               <User className="mr-2 h-6 w-6" />
               Student
             </Link>

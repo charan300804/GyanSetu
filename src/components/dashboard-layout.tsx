@@ -23,10 +23,31 @@ import {
   LayoutDashboard,
   Settings,
   Users,
+  Video,
+  Calendar,
 } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+
+
+const studentNav = [
+    { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/student/lessons', label: 'Lessons', icon: Video },
+    { href: '/student/1', label: 'My Profile', icon: Users },
+];
+
+const adminNav = [
+    { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/#', label: 'Students', icon: Users, disabled: true },
+    { href: '/courses', label: 'Courses', icon: BookOpenText },
+    { href: '/quizzes', label: 'Quizzes', icon: Award },
+    { href: '/progress', label: 'Progress', icon: BarChart3 },
+];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const isStudentArea = pathname.startsWith('/student');
+
+  const navItems = isStudentArea ? studentNav : adminNav;
 
   const isActive = (path: string) => {
     if (path === '/') return pathname === '/';
@@ -46,67 +67,51 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
           </SidebarHeader>
           <SidebarContent>
+            {isStudentArea && (
+                <div className="p-4 flex flex-col items-center text-center">
+                    <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
+                        <AvatarImage src="https://picsum.photos/seed/1/100/100" alt="Ravi Kumar" />
+                        <AvatarFallback>RK</AvatarFallback>
+                    </Avatar>
+                    <p className="font-semibold text-sidebar-foreground">Ravi Kumar</p>
+                    <p className="text-sm text-sidebar-foreground/80">Class 10A</p>
+                </div>
+            )}
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive('/')}>
-                  <Link href="/">
-                    <LayoutDashboard />
-                    <span>Dashboard</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive('/students')}>
-                  <Link href="/#">
-                    <Users />
-                    <span>Students</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive('/courses')}>
-                  <Link href="/courses">
-                    <BookOpenText />
-                    <span>Courses</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive('/quizzes')}>
-                  <Link href="/quizzes">
-                    <Award />
-                    <span>Quizzes</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive('/progress')}>
-                  <Link href="/progress">
-                    <BarChart3 />
-                    <span>Progress</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {navItems.map(item => (
+                <SidebarMenuItem key={item.label}>
+                  <SidebarMenuButton asChild isActive={isActive(item.href)} disabled={item.disabled}>
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/#">
-                    <HeartHandshake />
-                    <span>Parental Access</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/#">
-                    <Languages />
-                    <span>Language</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {!isStudentArea && (
+                <>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                    <Link href="/#">
+                        <HeartHandshake />
+                        <span>Parental Access</span>
+                    </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                    <Link href="/#">
+                        <Languages />
+                        <span>Language</span>
+                    </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                </>
+              )}
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={isActive('/settings')}>
                   <Link href="/settings">
