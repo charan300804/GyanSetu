@@ -3,11 +3,72 @@ import type { Student, Course, Performance, ModuleResult, TimetableEntry, Assign
 
 const students: Student[] = [
     { id: '1', name: 'Ravi Kumar', avatar: 'https://picsum.photos/seed/1/100/100', email: 'ravi@example.com', class: '10A', attendance: 95, overallScore: 88 },
+    { id: '2', name: 'Sunita Sharma', avatar: 'https://picsum.photos/seed/2/100/100', email: 'sunita@example.com', class: '10A', attendance: 98, overallScore: 92 },
+    { id: '3', name: 'Amit Singh', avatar: 'https://picsum.photos/seed/3/100/100', email: 'amit@example.com', class: '10A', attendance: 92, overallScore: 85 },
+    { id: '4', name: 'Priya Patel', avatar: 'https://picsum.photos/seed/4/100/100', email: 'priya@example.com', class: '10A', attendance: 99, overallScore: 95 },
+    { id: '5', name: 'Vikram Reddy', avatar: 'https://picsum.photos/seed/5/100/100', email: 'vikram@example.com', class: '10A', attendance: 90, overallScore: 81 },
 ];
 
-const courses: Course[] = [];
+const courses: Course[] = [
+    { id: 'c1', name: 'Mathematics 101', language: 'English' },
+    { id: 'c2', name: 'Science 101', language: 'English' },
+];
 
-const performances: Performance[] = [];
+const performances: Performance[] = [
+    {
+        studentId: '1',
+        courseId: 'c1',
+        progress: 75,
+        modules: [
+            { moduleName: 'Algebra Basics', score: 85, completionTime: 3600, attendancePercentage: 95 },
+            { moduleName: 'Geometry Fundamentals', score: 70, completionTime: 4500, attendancePercentage: 90 },
+        ],
+    },
+    {
+        studentId: '1',
+        courseId: 'c2',
+        progress: 60,
+        modules: [
+            { moduleName: 'Physics: Laws of Motion', score: 65, completionTime: 4000, attendancePercentage: 100 },
+        ],
+    },
+    {
+        studentId: '2',
+        courseId: 'c1',
+        progress: 90,
+        modules: [
+            { moduleName: 'Algebra Basics', score: 95, completionTime: 3200, attendancePercentage: 100 },
+            { moduleName: 'Geometry Fundamentals', score: 88, completionTime: 4000, attendancePercentage: 95 },
+        ],
+    },
+    {
+        studentId: '3',
+        courseId: 'c1',
+        progress: 80,
+         modules: [
+            { moduleName: 'Algebra Basics', score: 88, completionTime: 3400, attendancePercentage: 92 },
+            { moduleName: 'Geometry Fundamentals', score: 78, completionTime: 4600, attendancePercentage: 90 },
+        ],
+    },
+    {
+        studentId: '4',
+        courseId: 'c1',
+        progress: 95,
+         modules: [
+            { moduleName: 'Algebra Basics', score: 98, completionTime: 3100, attendancePercentage: 98 },
+            { moduleName: 'Geometry Fundamentals', score: 92, completionTime: 3900, attendancePercentage: 95 },
+        ],
+    },
+    {
+        studentId: '5',
+        courseId: 'c1',
+        progress: 70,
+        modules: [
+            { moduleName: 'Algebra Basics', score: 75, completionTime: 3800, attendancePercentage: 90 },
+            { moduleName: 'Geometry Fundamentals', score: 68, completionTime: 4800, attendancePercentage: 85 },
+        ],
+    },
+];
 
 const timetable: TimetableEntry[] = [
     { day: 'Monday', periods: [
@@ -55,9 +116,9 @@ export async function getPerformanceByStudentId(studentId: string): Promise<Perf
 
 export async function getSummaryStats() {
     return {
-        activeStudents: students.length > 0 ? 1 : 0,
-        coursesCompleted: 0,
-        averageScore: students.length > 0 ? 88 : 0,
+        activeStudents: students.length,
+        coursesCompleted: performances.filter(p => p.progress === 100).length,
+        averageScore: Math.round(students.reduce((acc, s) => acc + s.overallScore, 0) / students.length),
         totalCourses: courses.length,
     }
 }

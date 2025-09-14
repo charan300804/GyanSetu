@@ -1,3 +1,4 @@
+
 "use client";
 
 import { usePathname } from 'next/navigation';
@@ -24,7 +25,6 @@ import {
   Settings,
   Users,
   Video,
-  Calendar,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
@@ -37,7 +37,6 @@ const studentNav = [
 
 const adminNav = [
     { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/#', label: 'Students', icon: Users, disabled: true },
     { href: '/courses', label: 'Courses', icon: BookOpenText },
     { href: '/quizzes', label: 'Quizzes', icon: Award },
     { href: '/progress', label: 'Progress', icon: BarChart3 },
@@ -51,6 +50,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const isActive = (path: string) => {
     if (path === '/') return pathname === '/';
+    // Make student profile link active for any student id
+    if (path.startsWith('/student/')) return pathname.startsWith('/student/');
     return pathname.startsWith(path);
   };
 
@@ -67,13 +68,22 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
           </SidebarHeader>
           <SidebarContent>
-            {isStudentArea && (
+            {isStudentArea ? (
                 <div className="p-4 flex flex-col items-center text-center">
                     <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
                         <AvatarImage src="https://picsum.photos/seed/1/100/100" alt="Ravi Kumar" />
                         <AvatarFallback>RK</AvatarFallback>
                     </Avatar>
                     <p className="font-semibold text-sidebar-foreground">Ravi Kumar</p>
+                    <p className="text-sm text-sidebar-foreground/80">Class 10A</p>
+                </div>
+            ) : (
+               <div className="p-4 flex flex-col items-center text-center">
+                    <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
+                        <AvatarImage src="https://picsum.photos/seed/teacher/100/100" alt="Class Teacher" />
+                        <AvatarFallback>CT</AvatarFallback>
+                    </Avatar>
+                    <p className="font-semibold text-sidebar-foreground">Class Teacher</p>
                     <p className="text-sm text-sidebar-foreground/80">Class 10A</p>
                 </div>
             )}
