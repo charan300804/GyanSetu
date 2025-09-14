@@ -4,6 +4,7 @@ import {
   BookOpenText,
   Users,
   UserCheck,
+  UserPlus,
 } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -77,6 +78,20 @@ export default async function PrincipalDashboard() {
              <p className="text-xs text-muted-foreground">
               Class and Subject Teachers
             </p>
+          </CardContent>
+        </Card>
+         <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              User Management
+            </CardTitle>
+            <UserPlus className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground mb-2">
+              Create & manage teacher accounts.
+            </p>
+            <Button size="sm">Manage Users</Button>
           </CardContent>
         </Card>
       </div>

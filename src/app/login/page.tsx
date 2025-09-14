@@ -11,22 +11,27 @@ export default function LoginPage() {
           <CardTitle className="text-3xl font-bold">GyanSetu Login</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button className="w-full h-14 text-lg" asChild>
-            <Link href="/student/dashboard">
+           <Button className="w-full h-14 text-lg" asChild>
+            <Link href="/login/student">
               <User className="mr-2 h-6 w-6" />
               Student
+            </Link>
+          </Button>
+          <Button className="w-full h-14 text-lg" variant="outline" asChild>
+            <Link href="/register/student">
+              Student Registration
             </Link>
           </Button>
           <Button className="w-full h-14 text-lg" variant="secondary" asChild>
             <Link href="/login/administrator">
               <Briefcase className="mr-2 h-6 w-6" />
-              Student Administrator
+              Administrator
             </Link>
           </Button>
           <Button className="w-full h-14 text-lg" variant="secondary" asChild>
-            <Link href="#">
+             <Link href="/login/parent">
               <Shield className="mr-2 h-6 w-6" />
-              Student Parent
+              Parent / Guardian
             </Link>
           </Button>
         </CardContent>
