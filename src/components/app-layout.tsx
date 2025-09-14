@@ -5,9 +5,9 @@ import { DashboardLayout } from '@/components/dashboard-layout';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLoginPage = pathname.startsWith('/login');
+  const isPublicPage = pathname.startsWith('/login') || pathname.startsWith('/register');
 
-  if (isLoginPage) {
+  if (isPublicPage) {
     return <>{children}</>;
   }
 
