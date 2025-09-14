@@ -35,7 +35,7 @@ export default function AdministratorLoginPage() {
             </Link>
           </Button>
           <Button className="w-full h-14 text-lg" variant="secondary" asChild>
-            <Link href="/">
+            <Link href="/principal/dashboard">
               <UserTie className="mr-2 h-6 w-6" />
               Principal
             </Link>

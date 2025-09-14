@@ -42,17 +42,67 @@ const adminNav = [
     { href: '/progress', label: 'Progress', icon: BarChart3 },
 ];
 
+const principalNav = [
+    { href: '/principal/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/progress', label: 'Progress', icon: BarChart3 },
+];
+
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isStudentArea = pathname.startsWith('/student');
+  const isPrincipalArea = pathname.startsWith('/principal');
 
-  const navItems = isStudentArea ? studentNav : adminNav;
+  const getNavItems = () => {
+    if(isStudentArea) return studentNav;
+    if(isPrincipalArea) return principalNav;
+    return adminNav;
+  }
+
+  const navItems = getNavItems();
+
+  const getAvatar = () => {
+    if(isStudentArea) {
+        return (
+            <div className="p-4 flex flex-col items-center text-center">
+                <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
+                    <AvatarImage src="https://picsum.photos/seed/1/100/100" alt="Ravi Kumar" />
+                    <AvatarFallback>RK</AvatarFallback>
+                </Avatar>
+                <p className="font-semibold text-sidebar-foreground">Ravi Kumar</p>
+                <p className="text-sm text-sidebar-foreground/80">Class 10A</p>
+            </div>
+        )
+    }
+    if (isPrincipalArea) {
+        return (
+            <div className="p-4 flex flex-col items-center text-center">
+                <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
+                    <AvatarImage src="https://picsum.photos/seed/principal/100/100" alt="Principal" />
+                    <AvatarFallback>P</AvatarFallback>
+                </Avatar>
+                <p className="font-semibold text-sidebar-foreground">Principal</p>
+                <p className="text-sm text-sidebar-foreground/80">GyanSetu School</p>
+            </div>
+        )
+    }
+    return (
+       <div className="p-4 flex flex-col items-center text-center">
+            <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
+                <AvatarImage src="https://picsum.photos/seed/teacher/100/100" alt="Class Teacher" />
+                <AvatarFallback>CT</AvatarFallback>
+            </Avatar>
+            <p className="font-semibold text-sidebar-foreground">Class Teacher</p>
+            <p className="text-sm text-sidebar-foreground/80">Class 10A</p>
+        </div>
+    )
+  }
 
   const isActive = (path: string) => {
-    if (path === '/') return pathname === '/';
+    if (path === '/' && !isPrincipalArea) return pathname === '/';
+    if (path === '/principal/dashboard') return pathname === '/principal/dashboard';
     // Make student profile link active for any student id
     if (path.startsWith('/student/')) return pathname.startsWith('/student/');
-    return pathname.startsWith(path);
+    return pathname.startsWith(path) && path !== '/';
   };
 
   return (
@@ -68,29 +118,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
           </SidebarHeader>
           <SidebarContent>
-            {isStudentArea ? (
-                <div className="p-4 flex flex-col items-center text-center">
-                    <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
-                        <AvatarImage src="https://picsum.photos/seed/1/100/100" alt="Ravi Kumar" />
-                        <AvatarFallback>RK</AvatarFallback>
-                    </Avatar>
-                    <p className="font-semibold text-sidebar-foreground">Ravi Kumar</p>
-                    <p className="text-sm text-sidebar-foreground/80">Class 10A</p>
-                </div>
-            ) : (
-               <div className="p-4 flex flex-col items-center text-center">
-                    <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
-                        <AvatarImage src="https://picsum.photos/seed/teacher/100/100" alt="Class Teacher" />
-                        <AvatarFallback>CT</AvatarFallback>
-                    </Avatar>
-                    <p className="font-semibold text-sidebar-foreground">Class Teacher</p>
-                    <p className="text-sm text-sidebar-foreground/80">Class 10A</p>
-                </div>
-            )}
+            {getAvatar()}
             <SidebarMenu>
               {navItems.map(item => (
                 <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton asChild isActive={isActive(item.href)} disabled={item.disabled}>
+                  <SidebarMenuButton asChild isActive={isActive(item.href)}>
                     <Link href={item.href}>
                       <item.icon />
                       <span>{item.label}</span>
