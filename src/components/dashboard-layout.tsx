@@ -26,6 +26,7 @@ import {
   Users,
   Video,
   User,
+  Mail,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
@@ -38,6 +39,7 @@ const studentNav = [
 
 const parentNav = [
     { href: '/parent/dashboard', label: 'Student Profile', icon: User },
+    { href: '/messages', label: 'Messages', icon: Mail },
 ]
 
 const adminNav = [
@@ -45,11 +47,13 @@ const adminNav = [
     { href: '/courses', label: 'Courses', icon: BookOpenText },
     { href: '/quizzes', label: 'Quizzes', icon: Award },
     { href: '/progress', label: 'Progress', icon: BarChart3 },
+    { href: '/messages', label: 'Messages', icon: Mail },
 ];
 
 const principalNav = [
     { href: '/principal/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/progress', label: 'Progress', icon: BarChart3 },
+    { href: '/messages', label: 'Messages', icon: Mail },
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -57,11 +61,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const isStudentArea = pathname.startsWith('/student');
   const isPrincipalArea = pathname.startsWith('/principal');
   const isParentArea = pathname.startsWith('/parent');
+  const isMessagesArea = pathname.startsWith('/messages');
 
   const getNavItems = () => {
     if(isStudentArea) return studentNav;
     if(isParentArea) return parentNav;
     if(isPrincipalArea) return principalNav;
+    // For adminNav, we want to know which page is active, but also handle messages
+    if (isMessagesArea && !isParentArea && !isPrincipalArea) return adminNav;
     return adminNav;
   }
 
@@ -120,6 +127,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     if (path === '/' && !isPrincipalArea) return pathname === '/';
     if (path === '/principal/dashboard') return pathname === '/principal/dashboard';
     if (path === '/parent/dashboard') return pathname === '/parent/dashboard';
+    if (path === '/messages') return pathname === '/messages';
     // Make student profile link active for any student id
     if (path.startsWith('/student/')) return pathname.startsWith('/student/');
     return pathname.startsWith(path) && path !== '/';
@@ -158,7 +166,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <>
                 <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                    <Link href="/#">
+                    <Link href="/login/parent">
                         <HeartHandshake />
                         <span>Parental Access</span>
                     </Link>
