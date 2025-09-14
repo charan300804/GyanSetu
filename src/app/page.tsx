@@ -151,14 +151,13 @@ export default async function DashboardPage() {
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
-                          <Badge
+                           <Badge
                             variant={
-                              student.attendance > 90 ? 'default' : 'secondary'
-                            }
-                            className={
-                              student.attendance < 80
-                                ? 'bg-red-100 text-red-800'
-                                : ''
+                              student.attendance >= 90
+                                ? 'default'
+                                : student.attendance >= 75
+                                ? 'secondary'
+                                : 'destructive'
                             }
                           >
                             {student.attendance}%
