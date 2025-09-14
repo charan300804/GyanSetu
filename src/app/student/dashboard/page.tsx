@@ -30,7 +30,7 @@ export default async function StudentDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {todaysClasses ? (
+            {todaysClasses && todaysClasses.periods.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -62,20 +62,24 @@ export default async function StudentDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-4">
-              {assignments.filter(a => !a.completed).map(assignment => (
-                <li key={assignment.id} className="flex items-start gap-4">
-                  <Checkbox id={`assign-${assignment.id}`} className="mt-1" />
-                  <div className="grid gap-1">
-                    <label htmlFor={`assign-${assignment.id}`} className="font-medium">{assignment.title}</label>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span>{assignment.subject}</span>
-                      <Badge variant="outline">Due: {assignment.dueDate}</Badge>
+             {assignments.filter(a => !a.completed).length > 0 ? (
+                <ul className="space-y-4">
+                {assignments.filter(a => !a.completed).map(assignment => (
+                    <li key={assignment.id} className="flex items-start gap-4">
+                    <Checkbox id={`assign-${assignment.id}`} className="mt-1" />
+                    <div className="grid gap-1">
+                        <label htmlFor={`assign-${assignment.id}`} className="font-medium">{assignment.title}</label>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span>{assignment.subject}</span>
+                        <Badge variant="outline">Due: {assignment.dueDate}</Badge>
+                        </div>
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    </li>
+                ))}
+                </ul>
+             ) : (
+                <p className="text-muted-foreground">No pending assignments.</p>
+             )}
           </CardContent>
         </Card>
       </div>
@@ -87,6 +91,7 @@ export default async function StudentDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {assignments.filter(a => a.completed).length > 0 ? (
             <ul className="space-y-2">
               {assignments.filter(a => a.completed).map(assignment => (
                 <li key={assignment.id} className="flex items-center gap-3 text-muted-foreground">
@@ -95,6 +100,9 @@ export default async function StudentDashboardPage() {
                 </li>
               ))}
             </ul>
+            ) : (
+                <p className="text-muted-foreground">No completed assignments yet.</p>
+            )}
           </CardContent>
         </Card>
     </main>

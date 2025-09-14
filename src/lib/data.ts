@@ -1,3 +1,4 @@
+
 import { PlaceHolderImages } from './placeholder-images';
 import type { Student, Course, Performance, ModuleResult, TimetableEntry, Assignment, LessonVideo } from './types';
 
@@ -81,6 +82,25 @@ const timetable: TimetableEntry[] = [
         { time: '10:00-11:00', subject: 'Hindi', teacher: 'Mr. Verma' },
         { time: '11:00-12:00', subject: 'Maths', teacher: 'Mr. Sharma' },
     ]},
+    { day: 'Wednesday', periods: [
+        { time: '09:00-10:00', subject: 'Maths', teacher: 'Mr. Sharma' },
+        { time: '10:00-11:00', subject: 'Science', teacher: 'Ms. Gupta' },
+        { time: '11:00-12:00', subject: 'English', teacher: 'Mr. Singh' },
+    ]},
+    { day: 'Thursday', periods: [
+        { time: '09:00-10:00', subject: 'Social Studies', teacher: 'Mrs. Devi' },
+        { time: '10:00-11:00', subject: 'Hindi', teacher: 'Mr. Verma' },
+        { time: '11:00-12:00', subject: 'Maths', teacher: 'Mr. Sharma' },
+    ]},
+    { day: 'Friday', periods: [
+        { time: '09:00-10:00', subject: 'Maths', teacher: 'Mr. Sharma' },
+        { time: '10:00-11:00', subject: 'Science', teacher: 'Ms. Gupta' },
+        { time: '11:00-12:00', subject: 'English', teacher: 'Mr. Singh' },
+    ]},
+    { day: 'Saturday', periods: [
+        { time: '09:00-10:00', subject: 'Art', teacher: 'Mr. Khan' },
+        { time: '10:00-11:00', subject: 'Music', teacher: 'Ms. Rao' },
+    ]},
 ];
 
 const assignments: Assignment[] = [
@@ -136,6 +156,17 @@ export async function getEngagementData() {
 }
 
 export async function getTimetable(): Promise<TimetableEntry[]> {
+    const today = new Date().getDay();
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const currentDay = days[today];
+    
+    // Add today's schedule if it's a weekday and not already in the list
+    if (today > 0 && today < 6 && !timetable.find(t => t.day === currentDay)) {
+        const baseSchedule = timetable.find(t => t.day === 'Monday'); // Use Monday as a template
+        if (baseSchedule) {
+            return [{ day: currentDay, periods: baseSchedule.periods }, ...timetable];
+        }
+    }
     return timetable;
 }
 
