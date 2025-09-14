@@ -41,8 +41,8 @@ export default function ParentLoginPage() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" required />
             </div>
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" className="w-full" asChild>
+              <Link href="/parent/dashboard">Login</Link>
             </Button>
           </div>
         </CardContent>

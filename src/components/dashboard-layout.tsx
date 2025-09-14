@@ -25,6 +25,7 @@ import {
   Settings,
   Users,
   Video,
+  User,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
@@ -34,6 +35,10 @@ const studentNav = [
     { href: '/student/lessons', label: 'Lessons', icon: Video },
     { href: '/student/1', label: 'My Profile', icon: Users },
 ];
+
+const parentNav = [
+    { href: '/parent/dashboard', label: 'Student Profile', icon: User },
+]
 
 const adminNav = [
     { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -51,9 +56,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isStudentArea = pathname.startsWith('/student');
   const isPrincipalArea = pathname.startsWith('/principal');
+  const isParentArea = pathname.startsWith('/parent');
 
   const getNavItems = () => {
     if(isStudentArea) return studentNav;
+    if(isParentArea) return parentNav;
     if(isPrincipalArea) return principalNav;
     return adminNav;
   }
@@ -85,6 +92,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
         )
     }
+     if (isParentArea) {
+        return (
+            <div className="p-4 flex flex-col items-center text-center">
+                <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
+                    <AvatarImage src="https://picsum.photos/seed/parent/100/100" alt="Parent" />
+                    <AvatarFallback>P</AvatarFallback>
+                </Avatar>
+                <p className="font-semibold text-sidebar-foreground">Parent/Guardian</p>
+                <p className="text-sm text-sidebar-foreground/80">of Ravi Kumar</p>
+            </div>
+        )
+    }
     return (
        <div className="p-4 flex flex-col items-center text-center">
             <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
@@ -100,6 +119,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const isActive = (path: string) => {
     if (path === '/' && !isPrincipalArea) return pathname === '/';
     if (path === '/principal/dashboard') return pathname === '/principal/dashboard';
+    if (path === '/parent/dashboard') return pathname === '/parent/dashboard';
     // Make student profile link active for any student id
     if (path.startsWith('/student/')) return pathname.startsWith('/student/');
     return pathname.startsWith(path) && path !== '/';
@@ -134,7 +154,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
-              {!isStudentArea && (
+              {!isStudentArea && !isParentArea && (
                 <>
                 <SidebarMenuItem>
                     <SidebarMenuButton asChild>
