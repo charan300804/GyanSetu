@@ -39,7 +39,7 @@ import type { Teacher } from '@/lib/types';
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email.' }),
-  role: z.enum(['Class Teacher', 'Subject Teacher', 'Principal']),
+  role: z.enum(['Class Teacher', 'Subject Teacher']),
 });
 
 type AddEditUserDialogProps = {
@@ -57,7 +57,7 @@ export function AddEditUserDialog({ children, teacher }: AddEditUserDialogProps)
     defaultValues: {
       name: teacher?.name || '',
       email: teacher?.email || '',
-      role: teacher?.role || 'Class Teacher',
+      role: teacher?.role === 'Principal' ? 'Class Teacher' : (teacher?.role || 'Class Teacher'),
     },
   });
 
@@ -138,7 +138,6 @@ export function AddEditUserDialog({ children, teacher }: AddEditUserDialogProps)
                     <SelectContent>
                       <SelectItem value="Class Teacher">Class Teacher</SelectItem>
                       <SelectItem value="Subject Teacher">Subject Teacher</SelectItem>
-                      <SelectItem value="Principal">Principal</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
