@@ -25,10 +25,12 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { Skeleton } from "../ui/skeleton";
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
+  avatar: z.any().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -37,8 +39,8 @@ export function ProfileSettings() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
-  // Default values are now empty, will be populated from mock session data
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -49,36 +51,39 @@ export function ProfileSettings() {
   });
 
   useEffect(() => {
-    // In a real app, you'd fetch this from your auth context/provider
     const userType = sessionStorage.getItem('userType');
     let name = "User";
     let email = "user@example.com";
+    let avatar = "https://picsum.photos/seed/user/100/100";
 
     if (userType === 'student') {
         name = "Ravi Kumar";
         email = "ravi.kumar@example.com";
+        avatar = "https://picsum.photos/seed/1/100/100";
     } else if (userType === 'teacher' || userType === 'faculty') {
         name = "Mr. Sharma";
         email = "sharma@example.com";
+        avatar = "https://picsum.photos/seed/teacher/100/100";
     } else if (userType === 'principal') {
         name = "Principal Singh";
         email = "principal@example.com";
+        avatar = "https://picsum.photos/seed/principal/100/100";
     } else if (userType === 'parent') {
         name = "Parent of Ravi Kumar";
-        email = "parent.ravi@example.com"
+        email = "parent.ravi@example.com";
+        avatar = "https://picsum.photos/seed/parent/100/100";
     }
 
     form.reset({ name, email });
+    setAvatarPreview(avatar);
     setIsLoading(false);
   }, [form]);
 
 
   const onSubmit = (data: ProfileFormValues) => {
     setIsSubmitting(true);
-    // In a real app, this would call an action to update the user in the database
     console.log("Updating profile:", data);
     
-    // Simulate API call
     setTimeout(() => {
       toast({
         title: "Profile Updated",
@@ -87,6 +92,20 @@ export function ProfileSettings() {
       setIsSubmitting(false);
     }, 1000);
   };
+  
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Create a preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setAvatarPreview(previewUrl);
+      form.setValue('avatar', file); // Set the file in the form state for submission
+    }
+  };
+
+  const getFallback = (name: string) => {
+    return name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U';
+  }
 
   return (
     <Card>
@@ -112,6 +131,19 @@ export function ProfileSettings() {
                 </div>
             ) : (
                 <>
+                <FormItem>
+                  <FormLabel>Profile Photo</FormLabel>
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-16 w-16">
+                      <AvatarImage src={avatarPreview || ''} alt={form.getValues('name')} />
+                      <AvatarFallback>{getFallback(form.getValues('name'))}</AvatarFallback>
+                    </Avatar>
+                     <FormControl>
+                        <Input type="file" accept="image/*" className="max-w-xs" onChange={handleAvatarChange} />
+                    </FormControl>
+                  </div>
+                   <FormMessage />
+                </FormItem>
                 <FormField
                 control={form.control}
                 name="name"
@@ -151,4 +183,3 @@ export function ProfileSettings() {
     </Card>
   );
 }
-
