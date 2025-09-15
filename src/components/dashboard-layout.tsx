@@ -72,8 +72,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     if(isStudentArea) return studentNav;
     if(isParentArea) return parentNav;
     if(isPrincipalArea) return principalNav;
-    if(isMessagesArea) return adminNav;
-    if(isSettingsArea) {
+    if(isMessagesArea || isSettingsArea) {
       // This is a bit of a hack to determine context, in a real app
       // you would have this from a session/auth context provider.
       if(sessionStorage.getItem('userType') === 'student') return studentNav;
@@ -93,17 +92,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   };
 
   const getAvatar = () => {
-    let userType = '';
-    if (isStudentArea) userType = 'student';
-    else if (isParentArea) userType = 'parent';
-    else if (isPrincipalArea) userType = 'principal';
-    else if (isSettingsArea) userType = sessionStorage.getItem('userType') || 'teacher';
-    else userType = 'teacher';
+    // This is brittle. In a real app, this would come from a unified user context.
+    const userType = sessionStorage.getItem('userType') || 'teacher';
     
-    // Persist user type for settings page
-    if (userType) sessionStorage.setItem('userType', userType);
-
-
     if(userType === 'student') {
         return (
             <div className="p-4 flex flex-col items-center text-center">
