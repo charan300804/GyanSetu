@@ -1,3 +1,4 @@
+
 "use client";
 
 import { usePathname, useRouter } from 'next/navigation';
@@ -25,8 +26,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     const handleAuth = () => {
         // When the user navigates to a login page, we can assume they are "logging in"
         // and for the simulation, we can set them as authenticated.
-        if (pathname.startsWith('/login/student') || pathname.startsWith('/login/parent') || pathname.startsWith('/login/administrator')) {
+        if (pathname.startsWith('/login/student')) {
             sessionStorage.setItem('isAuthenticated', 'true');
+            sessionStorage.setItem('userType', 'student');
+        } else if (pathname.startsWith('/login/parent')) {
+            sessionStorage.setItem('isAuthenticated', 'true');
+            sessionStorage.setItem('userType', 'parent');
+        } else if (pathname.startsWith('/login/administrator')) {
+            sessionStorage.setItem('isAuthenticated', 'true');
+            // This could be teacher or principal, we'll default to teacher
+            // but the dashboard logic can refine it.
+             sessionStorage.setItem('userType', 'teacher');
         }
         
         setIsAuthenticated(checkUserAuth());

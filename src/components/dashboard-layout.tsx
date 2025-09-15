@@ -66,13 +66,21 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const isPrincipalArea = pathname.startsWith('/principal');
   const isParentArea = pathname.startsWith('/parent');
   const isMessagesArea = pathname.startsWith('/messages');
+  const isSettingsArea = pathname.startsWith('/settings');
 
   const getNavItems = () => {
     if(isStudentArea) return studentNav;
     if(isParentArea) return parentNav;
     if(isPrincipalArea) return principalNav;
-    // For adminNav, we want to know which page is active, but also handle messages
-    if (isMessagesArea && !isParentArea && !isPrincipalArea) return adminNav;
+    if(isMessagesArea) return adminNav;
+    if(isSettingsArea) {
+      // This is a bit of a hack to determine context, in a real app
+      // you would have this from a session/auth context provider.
+      if(sessionStorage.getItem('userType') === 'student') return studentNav;
+      if(sessionStorage.getItem('userType') === 'parent') return parentNav;
+      if(sessionStorage.getItem('userType') === 'principal') return principalNav;
+      return adminNav;
+    }
     return adminNav;
   }
 
@@ -80,11 +88,23 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const handleLogout = () => {
     sessionStorage.removeItem('isAuthenticated');
+    sessionStorage.removeItem('userType');
     router.push('/login');
   };
 
   const getAvatar = () => {
-    if(isStudentArea) {
+    let userType = '';
+    if (isStudentArea) userType = 'student';
+    else if (isParentArea) userType = 'parent';
+    else if (isPrincipalArea) userType = 'principal';
+    else if (isSettingsArea) userType = sessionStorage.getItem('userType') || 'teacher';
+    else userType = 'teacher';
+    
+    // Persist user type for settings page
+    if (userType) sessionStorage.setItem('userType', userType);
+
+
+    if(userType === 'student') {
         return (
             <div className="p-4 flex flex-col items-center text-center">
                 <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
@@ -96,7 +116,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
         )
     }
-    if (isPrincipalArea) {
+    if (userType === 'principal') {
         return (
             <div className="p-4 flex flex-col items-center text-center">
                 <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
@@ -108,7 +128,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
         )
     }
-     if (isParentArea) {
+     if (userType === 'parent') {
         return (
             <div className="p-4 flex flex-col items-center text-center">
                 <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
@@ -133,14 +153,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   }
 
   const isActive = (path: string) => {
-    if (path === '/' && !isPrincipalArea) return pathname === '/';
-    if (path === '/principal/dashboard') return pathname === '/principal/dashboard';
-    if (path === '/parent/dashboard') return pathname === '/parent/dashboard';
-    if (path === '/messages') return pathname === '/messages';
+    // Exact match for dashboards and settings
+    if (path === '/' || path === '/principal/dashboard' || path === '/parent/dashboard' || path === '/student/dashboard' || path === '/settings') {
+      return pathname === path;
+    }
     // Make student profile link active for any student id
     if (path.startsWith('/student/')) return pathname.startsWith('/student/');
+    
     return pathname.startsWith(path) && path !== '/';
   };
+
+  const userType = sessionStorage.getItem('userType');
 
   return (
     <SidebarProvider>
@@ -171,7 +194,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
-              {!isStudentArea && !isParentArea && (
+              {userType !== 'student' && userType !== 'parent' && (
                 <>
                 <SidebarMenuItem>
                     <SidebarMenuButton asChild>
