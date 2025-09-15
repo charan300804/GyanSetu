@@ -31,6 +31,7 @@ import type { Quiz, Question, Option } from '@/lib/types';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { ScrollArea } from './ui/scroll-area';
+import { Card } from './ui/card';
 
 const optionSchema = z.object({
   id: z.string(),
@@ -265,3 +266,5 @@ function OptionsArray({ form, qIndex, radioGroupField }: { form: any, qIndex: nu
         </div>
     )
 }
+
+    
