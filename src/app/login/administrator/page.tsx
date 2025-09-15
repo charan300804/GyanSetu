@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { login } from "@/lib/actions";
-import { ArrowLeft, UserCheck, UserCog, UserTie } from "lucide-react";
+import { ArrowLeft, UserCheck, UserCog, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -80,7 +80,7 @@ export default function AdministratorLoginPage() {
             variant="secondary"
             onClick={() => handleLogin("principal")}
           >
-            <UserTie className="mr-2 h-6 w-6" />
+            <Briefcase className="mr-2 h-6 w-6" />
             Principal
           </Button>
         </CardContent>
