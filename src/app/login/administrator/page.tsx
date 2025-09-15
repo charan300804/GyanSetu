@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,18 @@ export default function AdministratorLoginPage() {
         title: "Login Successful",
         description: `Redirecting to ${role} dashboard...`,
       });
+
+      // Set userType in sessionStorage for dashboard layout
+      let userId = "t-1";
+      if(role === 'faculty') {
+        userId = "t-2";
+      } else if (role === 'principal') {
+        userId = "p-1";
+      }
+      sessionStorage.setItem('userType', role);
+      sessionStorage.setItem('userId', userId);
+
+
       if (role === "teacher") router.push("/");
       if (role === "faculty") router.push("/courses");
       if (role === "principal") router.push("/principal/dashboard");

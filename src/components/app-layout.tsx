@@ -29,14 +29,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         if (pathname.startsWith('/login/student')) {
             sessionStorage.setItem('isAuthenticated', 'true');
             sessionStorage.setItem('userType', 'student');
+            sessionStorage.setItem('userId', '1');
         } else if (pathname.startsWith('/login/parent')) {
             sessionStorage.setItem('isAuthenticated', 'true');
             sessionStorage.setItem('userType', 'parent');
+            sessionStorage.setItem('userId', 'p-1');
         } else if (pathname.startsWith('/login/administrator')) {
             sessionStorage.setItem('isAuthenticated', 'true');
-            // This could be teacher or principal, we'll default to teacher
-            // but the dashboard logic can refine it.
+            // This could be teacher, faculty or principal. We'll default to teacher
+            // but the dashboard logic can refine it. The specific role is set on the login page itself.
              sessionStorage.setItem('userType', 'teacher');
+             sessionStorage.setItem('userId', 't-1');
         }
         
         setIsAuthenticated(checkUserAuth());
