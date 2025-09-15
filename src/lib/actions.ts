@@ -101,3 +101,4 @@ export async function createSession(uid: string, role: string) {
     // In a real app, you would set this token in an httpOnly cookie
     return { success: true };
 }
+

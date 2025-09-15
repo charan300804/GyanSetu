@@ -1,3 +1,95 @@
+
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "student-1",
+      "description": "Avatar for Ravi Kumar",
+      "imageUrl": "https://picsum.photos/seed/1/100/100",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "student-2",
+      "description": "Avatar for Priya Sharma",
+      "imageUrl": "https://picsum.photos/seed/2/100/100",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "student-3",
+      "description": "Avatar for Amit Singh",
+      "imageUrl": "https://picsum.photos/seed/3/100/100",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "student-4",
+      "description": "Avatar for Sneha Patel",
+      "imageUrl": "https://picsum.photos/seed/4/100/100",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "student-5",
+      "description": "Avatar for Mohit Verma",
+      "imageUrl": "https://picsum.photos/seed/5/100/100",
+      "imageHint": "student portrait"
+    },
+    {
+      "id": "teacher-1",
+      "description": "Avatar for Mr. Sharma",
+      "imageUrl": "https://picsum.photos/seed/teacher/100/100",
+      "imageHint": "teacher portrait"
+    },
+    {
+      "id": "teacher-2",
+      "description": "Avatar for Ms. Gupta",
+      "imageUrl": "https://picsum.photos/seed/faculty1/100/100",
+      "imageHint": "teacher portrait"
+    },
+    {
+      "id": "teacher-3",
+      "description": "Avatar for Mr. Khan",
+      "imageUrl": "https://picsum.photos/seed/faculty2/100/100",
+      "imageHint": "teacher portrait"
+    },
+    {
+      "id": "principal-1",
+      "description": "Avatar for Principal Singh",
+      "imageUrl": "https://picsum.photos/seed/principal/100/100",
+      "imageHint": "principal portrait"
+    },
+    {
+      "id": "parent-1",
+      "description": "Avatar for Parent of Ravi Kumar",
+      "imageUrl": "https://picsum.photos/seed/parent/100/100",
+      "imageHint": "parent portrait"
+    },
+    {
+      "id": "video-1",
+      "description": "Thumbnail for Photosynthesis lesson",
+      "imageUrl": "https://picsum.photos/seed/v1/400/225",
+      "imageHint": "science education"
+    },
+    {
+      "id": "video-2",
+      "description": "Thumbnail for Laws of Motion lesson",
+      "imageUrl": "https://picsum.photos/seed/v2/400/225",
+      "imageHint": "physics diagram"
+    },
+    {
+      "id": "video-3",
+      "description": "Thumbnail for Linear Equations lesson",
+      "imageUrl": "https://picsum.photos/seed/v3/400/225",
+      "imageHint": "math equations"
+    },
+    {
+      "id": "video-4",
+      "description": "Thumbnail for Trigonometry lesson",
+      "imageUrl": "https://picsum.photos/seed/v4/400/225",
+      "imageHint": "math geometry"
+    },
+    {
+      "id": "video-5",
+      "description": "Thumbnail for Shakespeare lesson",
+      "imageUrl": "https://picsum.photos/seed/v5/400/225",
+      "imageHint": "literature book"
+    }
+  ]
 }

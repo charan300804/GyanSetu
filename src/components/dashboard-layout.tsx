@@ -62,25 +62,26 @@ const principalNav = [
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const isStudentArea = pathname.startsWith('/student');
-  const isPrincipalArea = pathname.startsWith('/principal');
-  const isParentArea = pathname.startsWith('/parent');
-  const isMessagesArea = pathname.startsWith('/messages');
-  const isSettingsArea = pathname.startsWith('/settings');
+  
+  const getUserType = () => {
+    if (typeof window !== 'undefined') {
+        return sessionStorage.getItem('userType');
+    }
+    return 'teacher'; // Default for server render
+  }
+
+  const userType = getUserType();
 
   const getNavItems = () => {
-    if(isStudentArea) return studentNav;
-    if(isParentArea) return parentNav;
-    if(isPrincipalArea) return principalNav;
-    if(isMessagesArea || isSettingsArea) {
-      // This is a bit of a hack to determine context, in a real app
-      // you would have this from a session/auth context provider.
-      if(sessionStorage.getItem('userType') === 'student') return studentNav;
-      if(sessionStorage.getItem('userType') === 'parent') return parentNav;
-      if(sessionStorage.getItem('userType') === 'principal') return principalNav;
-      return adminNav;
+    switch (userType) {
+        case 'student': return studentNav;
+        case 'parent': return parentNav;
+        case 'principal': return principalNav;
+        case 'teacher':
+        case 'faculty':
+        default:
+            return adminNav;
     }
-    return adminNav;
   }
 
   const navItems = getNavItems();
@@ -88,14 +89,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const handleLogout = () => {
     sessionStorage.removeItem('isAuthenticated');
     sessionStorage.removeItem('userType');
+    sessionStorage.removeItem('userId');
     router.push('/login');
   };
 
   const getAvatar = () => {
-    // This is brittle. In a real app, this would come from a unified user context.
-    const userType = sessionStorage.getItem('userType') || 'teacher';
-    
-    if(userType === 'student') {
+    switch (userType) {
+      case 'student':
         return (
             <div className="p-4 flex flex-col items-center text-center">
                 <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
@@ -106,8 +106,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <p className="text-sm text-sidebar-foreground/80">Class 10A</p>
             </div>
         )
-    }
-    if (userType === 'principal') {
+      case 'principal':
         return (
             <div className="p-4 flex flex-col items-center text-center">
                 <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
@@ -118,8 +117,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <p className="text-sm text-sidebar-foreground/80">GyanSetu School</p>
             </div>
         )
-    }
-     if (userType === 'parent') {
+      case 'parent':
         return (
             <div className="p-4 flex flex-col items-center text-center">
                 <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
@@ -130,31 +128,47 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <p className="text-sm text-sidebar-foreground/80">of Ravi Kumar</p>
             </div>
         )
+      case 'faculty':
+         return (
+           <div className="p-4 flex flex-col items-center text-center">
+                <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
+                    <AvatarImage src="https://picsum.photos/seed/faculty1/100/100" alt="Subject Teacher" />
+                    <AvatarFallback>ST</AvatarFallback>
+                </Avatar>
+                <p className="font-semibold text-sidebar-foreground">Subject Teacher</p>
+                <p className="text-sm text-sidebar-foreground/80">Science</p>
+            </div>
+        )
+      default: // teacher
+        return (
+           <div className="p-4 flex flex-col items-center text-center">
+                <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
+                    <AvatarImage src="https://picsum.photos/seed/teacher/100/100" alt="Class Teacher" />
+                    <AvatarFallback>CT</AvatarFallback>
+                </Avatar>
+                <p className="font-semibold text-sidebar-foreground">Class Teacher</p>
+                <p className="text-sm text-sidebar-foreground/80">Class 10A</p>
+            </div>
+        )
     }
-    return (
-       <div className="p-4 flex flex-col items-center text-center">
-            <Avatar className="h-20 w-20 mb-2 border-2 border-primary">
-                <AvatarImage src="https://picsum.photos/seed/teacher/100/100" alt="Class Teacher" />
-                <AvatarFallback>CT</AvatarFallback>
-            </Avatar>
-            <p className="font-semibold text-sidebar-foreground">Class Teacher</p>
-            <p className="text-sm text-sidebar-foreground/80">Class 10A</p>
-        </div>
-    )
   }
 
   const isActive = (path: string) => {
-    // Exact match for dashboards and settings
-    if (path === '/' || path === '/principal/dashboard' || path === '/parent/dashboard' || path === '/student/dashboard' || path === '/settings') {
-      return pathname === path;
+    // Handle exact matches for root-level dashboards or specific pages
+    if (path === '/' && pathname !== '/') return false;
+    if (path === '/' && pathname === '/') return true;
+    if (['/student/dashboard', '/parent/dashboard', '/principal/dashboard', '/settings'].includes(path)) {
+        return pathname === path;
     }
-    // Make student profile link active for any student id
-    if (path.startsWith('/student/')) return pathname.startsWith('/student/');
+    // Handle student profile being active for any student ID
+    if (path === '/student/1' && pathname.startsWith('/student/')) return true;
     
+    // Handle parent paths
+    if (userType === 'parent' && path === '/parent/dashboard' && pathname.startsWith('/parent')) return true;
+
+    // Handle other nested routes
     return pathname.startsWith(path) && path !== '/';
   };
-
-  const userType = sessionStorage.getItem('userType');
 
   return (
     <SidebarProvider>

@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import { getLessonVideos } from "@/lib/data";
@@ -21,16 +22,19 @@ export default async function LessonsPage() {
             {videos.filter(v => v.subject === subject).map(video => (
               <Card key={video.id} className="group">
                 <CardHeader className="p-0 relative">
-                  <Image
-                    src={video.thumbnailUrl}
-                    alt={video.title}
-                    width={400}
-                    height={225}
-                    className="rounded-t-lg aspect-video object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <PlayCircle className="h-12 w-12 text-white" />
-                  </div>
+                  <Link href="#">
+                    <Image
+                      src={video.thumbnailUrl}
+                      alt={video.title}
+                      width={400}
+                      height={225}
+                      className="rounded-t-lg aspect-video object-cover"
+                      data-ai-hint={video.imageHint}
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <PlayCircle className="h-12 w-12 text-white" />
+                    </div>
+                  </Link>
                    {video.watched && (
                     <div className="absolute top-2 right-2">
                         <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-300">

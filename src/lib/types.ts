@@ -1,7 +1,9 @@
+
 export type Student = {
   id: string;
   name: string;
   avatar: string;
+  imageHint: string;
   email: string;
   class: string;
   attendance: number;
@@ -12,6 +14,7 @@ export type Teacher = {
   id: string;
   name: string;
   avatar: string;
+  imageHint: string;
   email: string;
   role: 'Class Teacher' | 'Subject Teacher' | 'Principal';
 };
@@ -61,6 +64,7 @@ export type LessonVideo = {
   thumbnailUrl: string;
   videoUrl: string;
   watched: boolean;
+  imageHint: string;
 };
 
 export type Option = {

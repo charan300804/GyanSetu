@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
@@ -99,7 +100,7 @@ export default async function StudentProfilePage({
           <Card>
             <CardHeader className="flex flex-row items-center gap-4">
               <Avatar className="h-16 w-16 border">
-                <AvatarImage src={student.avatar} alt={student.name} />
+                <AvatarImage src={student.avatar} alt={student.name} data-ai-hint={student.imageHint} />
                 <AvatarFallback>{student.name ? student.name.charAt(0) : '?'}</AvatarFallback>
               </Avatar>
               <div className="grid gap-1">

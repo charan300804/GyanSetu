@@ -8,10 +8,10 @@ import { useEffect, useState } from 'react';
 // A mock function to check if a user is authenticated.
 const checkUserAuth = () => {
     if (typeof window === 'undefined') {
-        return false;
+        return { auth: false, checked: false };
     }
     // We use sessionStorage to persist the "login" state just for the current browser session.
-    return sessionStorage.getItem('isAuthenticated') === 'true';
+    return { auth: sessionStorage.getItem('isAuthenticated') === 'true', checked: true };
 }
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -23,51 +23,55 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const isPublicPage = pathname.startsWith('/login') || pathname.startsWith('/register');
 
   useEffect(() => {
-    const handleAuth = () => {
-        // When the user navigates to a login page, we can assume they are "logging in"
-        // and for the simulation, we can set them as authenticated.
-        if (pathname.startsWith('/login/student')) {
-            sessionStorage.setItem('isAuthenticated', 'true');
-            sessionStorage.setItem('userType', 'student');
-            sessionStorage.setItem('userId', '1');
-        } else if (pathname.startsWith('/login/parent')) {
-            sessionStorage.setItem('isAuthenticated', 'true');
-            sessionStorage.setItem('userType', 'parent');
-            sessionStorage.setItem('userId', 'p-1');
-        } else if (pathname.startsWith('/login/administrator')) {
-            sessionStorage.setItem('isAuthenticated', 'true');
-            // This could be teacher, faculty or principal. We'll default to teacher
-            // but the dashboard logic can refine it. The specific role is set on the login page itself.
-             sessionStorage.setItem('userType', 'teacher');
-             sessionStorage.setItem('userId', 't-1');
-        }
-        
-        setIsAuthenticated(checkUserAuth());
-        setIsAuthChecked(true);
-    };
-    handleAuth();
-  }, [pathname]);
+    const authStatus = checkUserAuth();
+    setIsAuthenticated(authStatus.auth);
+    setIsAuthChecked(authStatus.checked);
+  }, []);
 
   useEffect(() => {
-    if (isAuthChecked && !isAuthenticated && !isPublicPage) {
-      router.push('/login');
+    // This effect runs when auth state is resolved or path changes.
+    // It handles redirects.
+    if (isAuthChecked) {
+        if (isAuthenticated && isPublicPage) {
+            const userType = sessionStorage.getItem('userType');
+            switch (userType) {
+                case 'student':
+                    router.push('/student/dashboard');
+                    break;
+                case 'parent':
+                    router.push('/parent/dashboard');
+                    break;
+                case 'principal':
+                    router.push('/principal/dashboard');
+                    break;
+                case 'teacher':
+                case 'faculty':
+                    router.push('/'); // Teacher dashboard is at root
+                    break;
+                default:
+                    router.push('/login');
+            }
+        } else if (!isAuthenticated && !isPublicPage) {
+            router.push('/login');
+        }
     }
-  }, [isAuthChecked, isAuthenticated, isPublicPage, router]);
+  }, [isAuthChecked, isAuthenticated, isPublicPage, router, pathname]);
 
 
   if (!isAuthChecked) {
-    // Render a loading state or nothing while checking auth
+    // Render a loading state or nothing while checking auth.
+    // This prevents a flash of the login page on a refresh when authenticated.
     return null; 
   }
 
-  if (!isAuthenticated && !isPublicPage) {
-    // Render a loading state or nothing while redirecting
-    return null;
-  }
-  
   if (isPublicPage) {
     return <>{children}</>;
   }
 
+  if (!isAuthenticated) {
+    // While redirecting, show nothing to prevent flashing the dashboard layout.
+    return null;
+  }
+  
   return <DashboardLayout>{children}</DashboardLayout>;
 }
