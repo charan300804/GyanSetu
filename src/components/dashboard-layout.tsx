@@ -27,6 +27,7 @@ import {
   Video,
   User,
   Mail,
+  UserPlus,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
@@ -52,6 +53,7 @@ const adminNav = [
 
 const principalNav = [
     { href: '/principal/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/principal/users', label: 'User Management', icon: UserPlus },
     { href: '/progress', label: 'Progress', icon: BarChart3 },
     { href: '/messages', label: 'Messages', icon: Mail },
 ];

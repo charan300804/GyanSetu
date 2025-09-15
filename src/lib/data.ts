@@ -1,5 +1,5 @@
 import { PlaceHolderImages } from './placeholder-images';
-import type { Student, Course, Performance, ModuleResult, TimetableEntry, Assignment, LessonVideo } from './types';
+import type { Student, Course, Performance, ModuleResult, TimetableEntry, Assignment, LessonVideo, Teacher } from './types';
 
 const students: Student[] = [
     { id: '1', name: 'Ravi Kumar', avatar: 'https://picsum.photos/seed/1/100/100', email: 'ravi@example.com', class: '10A', attendance: 95, overallScore: 88 },
@@ -9,6 +9,13 @@ const students: Student[] = [
     { id: '5', name: 'Vikram Reddy', avatar: 'https://picsum.photos/seed/5/100/100', email: 'vikram@example.com', class: '10A', attendance: 90, overallScore: 81 },
     { id: '6', name: 'Anjali Gupta', avatar: 'https://picsum.photos/seed/6/100/100', email: 'anjali@example.com', class: '10A', attendance: 85, overallScore: 89 },
     { id: '7', name: 'Rohan Mehra', avatar: 'https://picsum.photos/seed/7/100/100', email: 'rohan@example.com', class: '10A', attendance: 65, overallScore: 68 },
+];
+
+const teachers: Teacher[] = [
+    { id: 't1', name: 'Mr. Sharma', avatar: 'https://picsum.photos/seed/teacher1/100/100', email: 'sharma@example.com', role: 'Class Teacher' },
+    { id: 't2', name: 'Ms. Gupta', avatar: 'https://picsum.photos/seed/teacher2/100/100', email: 'gupta@example.com', role: 'Subject Teacher' },
+    { id: 't3', name: 'Mr. Singh', avatar: 'https://picsum.photos/seed/teacher3/100/100', email: 'singh@example.com', role: 'Subject Teacher' },
+    { id: 't4', name: 'Mrs. Devi', avatar: 'https://picsum.photos/seed/teacher4/100/100', email: 'devi@example.com', role: 'Subject Teacher' },
 ];
 
 const courses: Course[] = [
@@ -99,6 +106,10 @@ export async function getStudents(): Promise<Student[]> {
 
 export async function getStudentById(id: string): Promise<Student | undefined> {
   return students.find(s => s.id === id);
+}
+
+export async function getTeachers(): Promise<Teacher[]> {
+    return teachers;
 }
 
 export async function getCourses(): Promise<Course[]> {

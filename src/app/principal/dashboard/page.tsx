@@ -75,7 +75,7 @@ export default async function PrincipalDashboard() {
             <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div>
+            <div className="text-2xl font-bold">4</div>
              <p className="text-xs text-muted-foreground">
               Class and Subject Teachers
             </p>
@@ -92,7 +92,9 @@ export default async function PrincipalDashboard() {
             <p className="text-xs text-muted-foreground mb-2">
               Create & manage teacher accounts.
             </p>
-            <Button size="sm">Manage Users</Button>
+            <Button size="sm" asChild>
+              <Link href="/principal/users">Manage Users</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

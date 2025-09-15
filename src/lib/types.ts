@@ -8,6 +8,14 @@ export type Student = {
   overallScore: number;
 };
 
+export type Teacher = {
+  id: string;
+  name: string;
+  avatar: string;
+  email: string;
+  role: 'Class Teacher' | 'Subject Teacher' | 'Principal';
+};
+
 export type Course = {
   id: string;
   name: string;
