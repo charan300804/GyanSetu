@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
+import { CreateCourseDialog } from "@/components/create-course-dialog";
+import { UploadContentDialog } from "@/components/upload-content-dialog";
 
 export default function CoursesPage() {
   return (
@@ -8,14 +9,14 @@ export default function CoursesPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Manage Courses & Modules</CardTitle>
+            <CardTitle>Manage Courses &amp; Modules</CardTitle>
             <CardDescription>
               Create, view, and edit learning modules for your subjects.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">This section allows faculty to manage courses and modules. You can create new courses and upload lesson materials.</p>
-            <Button>Create New Course</Button>
+            <CreateCourseDialog />
           </CardContent>
         </Card>
         <Card>
@@ -26,14 +27,14 @@ export default function CoursesPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-             <Button variant="outline">
+            <UploadContentDialog contentType="Video Lesson">
                 <Upload className="mr-2 h-4 w-4" />
                 Upload Video Lesson
-            </Button>
-             <Button variant="outline">
+            </UploadContentDialog>
+            <UploadContentDialog contentType="Notes">
                 <Upload className="mr-2 h-4 w-4" />
                 Upload Notes
-            </Button>
+            </UploadContentDialog>
           </CardContent>
         </Card>
       </div>
