@@ -1,3 +1,7 @@
+
+"use client";
+
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -25,21 +29,53 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { AddEditUserDialog } from '@/components/add-edit-user-dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import type { Teacher } from '@/lib/types';
 
-export default async function UserManagementPage() {
-  const teachers = await getTeachers();
+
+export default function UserManagementPage() {
+    // In a real app, this would be async server component and data would be refetched on change
+    const [teachers, setTeachers] = useState<Teacher[]>([]);
+    const { toast } = useToast();
+
+    useState(() => {
+        getTeachers().then(setTeachers);
+    });
+
+  const handleDelete = (teacherId: string) => {
+    // Simulate API call
+    setTeachers(teachers.filter(t => t.id !== teacherId));
+    toast({
+        title: "User Deleted",
+        description: "The user account has been successfully deleted.",
+    })
+  }
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <div className="flex items-center">
         <h1 className="text-2xl font-bold">User Management</h1>
         <div className="ml-auto flex items-center gap-2">
-          <Button size="sm" className="h-8 gap-1">
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Add User
-            </span>
-          </Button>
+            <AddEditUserDialog>
+                <Button size="sm" className="h-8 gap-1">
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Add User
+                    </span>
+                </Button>
+            </AddEditUserDialog>
         </div>
       </div>
       <Card>
@@ -94,8 +130,27 @@ export default async function UserManagementPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <AddEditUserDialog teacher={teacher}>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Edit</DropdownMenuItem>
+                        </AddEditUserDialog>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600">Delete</DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the user account for {teacher.name}.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(teacher.id)} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

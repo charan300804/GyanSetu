@@ -5,6 +5,8 @@ import type { SummarizeStudentPerformanceInput } from "@/ai/flows/summarize-stud
 import { getFirebaseAdmin } from "./firebase-admin";
 
 type Role = "student" | "parent" | "teacher" | "faculty" | "principal";
+export type UserRole = 'Class Teacher' | 'Subject Teacher' | 'Principal';
+
 
 export async function generateStudentSummary(input: SummarizeStudentPerformanceInput) {
   try {
@@ -52,6 +54,25 @@ export async function registerStudent(input: { fullName: string, studentId: stri
     // Simulate a successful registration
     return { success: true, userId: `student-${input.studentId}` };
 }
+
+export async function addUser(input: { name: string, email: string, role: UserRole }) {
+    console.log(`Simulating adding user: ${input.name} (${input.email}) with role ${input.role}`);
+    // In a real app, you would create the user in your database
+    if (!input.name || !input.email || !input.role) {
+        return { success: false, error: "Missing required fields." };
+    }
+    return { success: true, user: { ...input, id: `t${Math.random()}`, avatar: `https://picsum.photos/seed/${Math.random()}/100/100` } };
+}
+
+export async function updateUser(id: string, input: { name: string, email: string, role: UserRole }) {
+    console.log(`Simulating updating user ${id}: ${input.name} (${input.email}) with role ${input.role}`);
+    // In a real app, you would update the user in your database
+     if (!input.name || !input.email || !input.role) {
+        return { success: false, error: "Missing required fields." };
+    }
+    return { success: true, user: { ...input, id, avatar: `https://picsum.photos/seed/${id}/100/100` } };
+}
+
 
 export async function createSession(uid: string, role: string) {
     // This function would be called after a successful login.
