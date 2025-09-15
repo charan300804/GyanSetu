@@ -1,7 +1,7 @@
 
 "use client";
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   SidebarProvider,
@@ -22,6 +22,7 @@ import {
   HeartHandshake,
   Languages,
   LayoutDashboard,
+  LogOut,
   Settings,
   Users,
   Video,
@@ -60,6 +61,7 @@ const principalNav = [
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const isStudentArea = pathname.startsWith('/student');
   const isPrincipalArea = pathname.startsWith('/principal');
   const isParentArea = pathname.startsWith('/parent');
@@ -75,6 +77,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   }
 
   const navItems = getNavItems();
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('isAuthenticated');
+    router.push('/login');
+  };
 
   const getAvatar = () => {
     if(isStudentArea) {
@@ -190,6 +197,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     <Settings />
                     <span>Settings</span>
                   </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleLogout}>
+                  <LogOut />
+                  <span>Logout</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
