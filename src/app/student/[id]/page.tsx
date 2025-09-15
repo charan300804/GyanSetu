@@ -62,7 +62,7 @@ export default async function StudentProfilePage({
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" className="h-7 w-7" asChild>
-          <Link href="/">
+          <Link href="/student/dashboard">
             <ArrowLeft className="h-4 w-4" />
             <span className="sr-only">Back</span>
           </Link>
@@ -81,7 +81,7 @@ export default async function StudentProfilePage({
             <DialogHeader>
               <DialogTitle>Progress QR Code</DialogTitle>
               <DialogDescription>
-                Scan this code to view {student.name}'s video lesson progress.
+                Scan this code to sync your video lesson progress with your teacher's device.
               </DialogDescription>
             </DialogHeader>
             <div className="flex justify-center p-4">
