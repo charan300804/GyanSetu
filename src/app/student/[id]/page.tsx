@@ -51,11 +51,15 @@ export default async function StudentProfilePage({
   });
 
   const watchedVideos = videos.filter(v => v.watched);
-  const progressData = {
-    studentId: student.id,
-    watchedVideos: watchedVideos.map(v => v.id),
+  
+  // Consolidate all student data for the QR code
+  const fullProgressData = {
+    student: student,
+    performance: enrolledCourses,
+    watchedVideoIds: watchedVideos.map(v => v.id),
   };
-  const qrCodeData = encodeURIComponent(JSON.stringify(progressData));
+
+  const qrCodeData = encodeURIComponent(JSON.stringify(fullProgressData));
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrCodeData}`;
 
   return (
