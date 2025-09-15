@@ -31,8 +31,6 @@ export async function login(identifier: string, password?: string, role?: Role) 
     // 2. If valid, get the user's role.
     // 3. Use Firebase Admin to create a custom JWT with the role as a claim.
     // 4. Return the token to the client to be stored securely (e.g., in an httpOnly cookie).
-    console.log(`Simulating login for ${identifier} with role ${role}`);
-
     if (!identifier) {
         return { success: false, error: "Invalid credentials provided."}
     }
@@ -47,9 +45,6 @@ export async function registerStudent(input: { studentId: string, tempPassword: 
     // 2. Validate the provided temporary password.
     // 3. Hash the new password and update the user record.
     // 4. Mark the account as 'activated'.
-    console.log(`Simulating activation for student: ${input.studentId}`);
-
-    // Simulate checking for required fields
     if (!input.studentId || !input.tempPassword || !input.newPassword) {
         return { success: false, error: "Missing required registration fields." };
     }
@@ -64,7 +59,6 @@ export async function registerStudent(input: { studentId: string, tempPassword: 
 }
 
 export async function addUser(input: { teacherId: string; password: string; role: UserRole }) {
-    console.log(`Simulating adding user: ${input.teacherId} with role ${input.role}`);
     // In a real app, you would create the user in your database with a hashed password
     if (!input.teacherId || !input.password || !input.role) {
         return { success: false, error: "Missing required fields." };
@@ -74,7 +68,6 @@ export async function addUser(input: { teacherId: string; password: string; role
 }
 
 export async function updateUser(id: string, input: { name: string, email: string, role: UserRole }) {
-    console.log(`Simulating updating user ${id}: ${input.name} (${input.email}) with role ${input.role}`);
     // In a real app, you would update the user in your database
      if (!input.name || !input.email || !input.role) {
         return { success: false, error: "Missing required fields." };
@@ -83,20 +76,17 @@ export async function updateUser(id: string, input: { name: string, email: strin
 }
 
 export async function addQuiz(quiz: Omit<Quiz, 'id'>) {
-    console.log('Simulating adding quiz:', quiz);
     const newQuiz: Quiz = { ...quiz, id: `quiz-${Date.now()}` };
     // In a real app, you'd save this to your database
     return { success: true, quiz: newQuiz };
 }
 
 export async function updateQuiz(id: string, quiz: Partial<Quiz>) {
-    console.log(`Simulating updating quiz ${id}:`, quiz);
     // In a real app, you'd update this in your database
     return { success: true, quiz: { ...quiz, id } };
 }
 
 export async function deleteQuiz(id: string) {
-    console.log(`Simulating deleting quiz ${id}`);
     // In a real app, you'd delete this from your database
     return { success: true };
 }
@@ -109,7 +99,5 @@ export async function createSession(uid: string, role: string) {
     const token = await admin.auth().createCustomToken(uid, { role });
     
     // In a real app, you would set this token in an httpOnly cookie
-    console.log("Generated custom token (simulation):", token);
-
     return { success: true };
 }
