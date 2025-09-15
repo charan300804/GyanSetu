@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -50,9 +50,9 @@ export default function UserManagementPage() {
     const [teachers, setTeachers] = useState<Teacher[]>([]);
     const { toast } = useToast();
 
-    useState(() => {
+    useEffect(() => {
         getTeachers().then(setTeachers);
-    });
+    }, []);
 
   const handleDelete = (teacherId: string) => {
     // Simulate API call
@@ -103,12 +103,12 @@ export default function UserManagementPage() {
                     <div className="flex items-center gap-3">
                       <Avatar className="h-9 w-9">
                         <AvatarImage src={teacher.avatar} alt={teacher.name} />
-                        <AvatarFallback>{teacher.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback>{teacher.name ? teacher.name.charAt(0) : '?'}</AvatarFallback>
                       </Avatar>
                       <div className="grid gap-0.5">
-                        <div className="font-medium">{teacher.name}</div>
+                        <div className="font-medium">{teacher.name || teacher.id}</div>
                         <div className="text-xs text-muted-foreground">
-                          {teacher.email}
+                          {teacher.email || 'Pending setup'}
                         </div>
                       </div>
                     </div>
@@ -141,7 +141,7 @@ export default function UserManagementPage() {
                                 <AlertDialogHeader>
                                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                        This action cannot be undone. This will permanently delete the user account for {teacher.name}.
+                                        This action cannot be undone. This will permanently delete the user account for {teacher.name || teacher.id}.
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>

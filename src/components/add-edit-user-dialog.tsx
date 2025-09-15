@@ -37,6 +37,12 @@ import { addUser, updateUser, type UserRole } from '@/lib/actions';
 import type { Teacher } from '@/lib/types';
 
 const formSchema = z.object({
+  teacherId: z.string().min(4, { message: 'Teacher ID must be at least 4 characters.' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
+  role: z.enum(['Class Teacher', 'Subject Teacher']),
+});
+
+const editFormSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email.' }),
   role: z.enum(['Class Teacher', 'Subject Teacher']),
@@ -53,25 +59,25 @@ export function AddEditUserDialog({ children, teacher }: AddEditUserDialogProps)
   const isEditMode = !!teacher;
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(isEditMode ? editFormSchema : formSchema),
     defaultValues: {
+      teacherId: '',
+      password: '',
       name: teacher?.name || '',
       email: teacher?.email || '',
       role: teacher?.role === 'Principal' ? 'Class Teacher' : (teacher?.role || 'Class Teacher'),
-    },
+    } as any,
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const action = isEditMode
-      ? updateUser(teacher.id, values as { name: string; email: string; role: UserRole })
-      : addUser(values as { name: string; email: string; role: UserRole });
-    
-    const result = await action;
+  const onSubmit = async (values: z.infer<typeof formSchema> | z.infer<typeof editFormSchema>) => {
+    const result = await (isEditMode
+      ? updateUser(teacher!.id, values as { name: string; email: string; role: UserRole })
+      : addUser(values as { teacherId: string; password: string; role: UserRole }));
 
     if (result.success) {
       toast({
-        title: `User ${isEditMode ? 'Updated' : 'Added'}`,
-        description: `The user account for ${values.name} has been successfully ${isEditMode ? 'updated' : 'created'}.`,
+        title: `User ${isEditMode ? 'Updated' : 'Created'}`,
+        description: `The user account has been successfully ${isEditMode ? 'updated' : 'created'}.`,
       });
       setOpen(false);
       // In a real app, you'd likely trigger a data re-fetch here instead of reloading.
@@ -90,39 +96,75 @@ export function AddEditUserDialog({ children, teacher }: AddEditUserDialogProps)
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEditMode ? 'Edit User' : 'Add New User'}</DialogTitle>
+          <DialogTitle>{isEditMode ? 'Edit User' : 'Create Teacher Credentials'}</DialogTitle>
           <DialogDescription>
-            {isEditMode ? "Update the user's details below." : 'Enter the details for the new user.'}
+            {isEditMode
+              ? "Update the user's details below."
+              : 'Create a new Teacher ID and temporary password. The teacher will complete their profile after first login.'}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="user@example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {isEditMode ? (
+              <>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="user@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            ) : (
+              <>
+                <FormField
+                  control={form.control}
+                  name="teacherId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Teacher ID</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., T-12345" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Temporary Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
             <FormField
               control={form.control}
               name="role"
@@ -151,7 +193,11 @@ export function AddEditUserDialog({ children, teacher }: AddEditUserDialogProps)
                 </Button>
               </DialogClose>
               <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
+                {form.formState.isSubmitting
+                  ? 'Saving...'
+                  : isEditMode
+                  ? 'Save Changes'
+                  : 'Create User'}
               </Button>
             </DialogFooter>
           </form>

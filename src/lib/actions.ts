@@ -1,3 +1,4 @@
+
 "use server";
 
 import { summarizeStudentPerformance } from "@/ai/flows/summarize-student-performance";
@@ -55,13 +56,14 @@ export async function registerStudent(input: { fullName: string, studentId: stri
     return { success: true, userId: `student-${input.studentId}` };
 }
 
-export async function addUser(input: { name: string, email: string, role: UserRole }) {
-    console.log(`Simulating adding user: ${input.name} (${input.email}) with role ${input.role}`);
-    // In a real app, you would create the user in your database
-    if (!input.name || !input.email || !input.role) {
+export async function addUser(input: { teacherId: string; password: string; role: UserRole }) {
+    console.log(`Simulating adding user: ${input.teacherId} with role ${input.role}`);
+    // In a real app, you would create the user in your database with a hashed password
+    if (!input.teacherId || !input.password || !input.role) {
         return { success: false, error: "Missing required fields." };
     }
-    return { success: true, user: { ...input, id: `t${Math.random()}`, avatar: `https://picsum.photos/seed/${Math.random()}/100/100` } };
+    // This now returns a partial user object. The teacher will fill in the rest.
+    return { success: true, user: { id: input.teacherId, role: input.role } };
 }
 
 export async function updateUser(id: string, input: { name: string, email: string, role: UserRole }) {
