@@ -4,9 +4,10 @@
 import { summarizeStudentPerformance } from "@/ai/flows/summarize-student-performance";
 import type { SummarizeStudentPerformanceInput } from "@/ai/flows/summarize-student-performance";
 import { getFirebaseAdmin } from "./firebase-admin";
+import type { Quiz } from "./types";
 
 type Role = "student" | "parent" | "teacher" | "faculty" | "principal";
-export type UserRole = 'Class Teacher' | 'Subject Teacher' | 'Principal';
+export type UserRole = 'Class Teacher' | 'Subject Teacher';
 
 
 export async function generateStudentSummary(input: SummarizeStudentPerformanceInput) {
@@ -73,6 +74,25 @@ export async function updateUser(id: string, input: { name: string, email: strin
         return { success: false, error: "Missing required fields." };
     }
     return { success: true, user: { ...input, id, avatar: `https://picsum.photos/seed/${id}/100/100` } };
+}
+
+export async function addQuiz(quiz: Omit<Quiz, 'id'>) {
+    console.log('Simulating adding quiz:', quiz);
+    const newQuiz: Quiz = { ...quiz, id: `quiz-${Date.now()}` };
+    // In a real app, you'd save this to your database
+    return { success: true, quiz: newQuiz };
+}
+
+export async function updateQuiz(id: string, quiz: Partial<Quiz>) {
+    console.log(`Simulating updating quiz ${id}:`, quiz);
+    // In a real app, you'd update this in your database
+    return { success: true, quiz: { ...quiz, id } };
+}
+
+export async function deleteQuiz(id: string) {
+    console.log(`Simulating deleting quiz ${id}`);
+    // In a real app, you'd delete this from your database
+    return { success: true };
 }
 
 

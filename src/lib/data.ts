@@ -1,6 +1,6 @@
 
 import { PlaceHolderImages } from './placeholder-images';
-import type { Student, Course, Performance, ModuleResult, TimetableEntry, Assignment, LessonVideo, Teacher } from './types';
+import type { Student, Course, Performance, ModuleResult, TimetableEntry, Assignment, LessonVideo, Teacher, Quiz } from './types';
 
 const students: Student[] = [];
 
@@ -15,6 +15,8 @@ const timetable: TimetableEntry[] = [];
 const assignments: Assignment[] = [];
 
 const lessonVideos: LessonVideo[] = [];
+
+const quizzes: Quiz[] = [];
 
 
 // Data access functions
@@ -32,6 +34,10 @@ export async function getTeachers(): Promise<Teacher[]> {
 
 export async function getCourses(): Promise<Course[]> {
   return courses;
+}
+
+export async function getQuizzes(): Promise<Quiz[]> {
+    return quizzes;
 }
 
 export async function getPerformanceByStudentId(studentId: string): Promise<Performance[]> {

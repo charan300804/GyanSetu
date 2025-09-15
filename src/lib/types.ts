@@ -62,3 +62,22 @@ export type LessonVideo = {
   videoUrl: string;
   watched: boolean;
 };
+
+export type Option = {
+  id: string;
+  text: string;
+};
+
+export type Question = {
+  id: string;
+  text: string;
+  options: Option[];
+  correctOptionId: string;
+};
+
+export type Quiz = {
+  id: string;
+  title: string;
+  subject: string;
+  questions: Question[];
+};
