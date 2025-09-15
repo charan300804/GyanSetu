@@ -15,6 +15,8 @@ import {
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { QrCode, Upload, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+// In a real app, you'd use a proper QR scanner library like 'react-qr-scanner' or 'html5-qrcode'
+// For this prototype, we will simulate the scanning process.
 
 export function ScanQrCodeDialog() {
   const [open, setOpen] = useState(false);
@@ -28,19 +30,20 @@ export function ScanQrCodeDialog() {
       setScannedData(null);
       const getCameraPermission = async () => {
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-          setHasCameraPermission(true);
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
+          // Check for camera permission without immediately requesting it
+          const permissions = await navigator.permissions.query({ name: 'camera' as PermissionName });
+          if (permissions.state === 'granted') {
+             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+             setHasCameraPermission(true);
+             if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+             }
+          } else {
+             setHasCameraPermission(permissions.state !== 'denied');
           }
         } catch (error) {
-          console.error("Error accessing camera:", error);
+          console.error("Error checking camera permissions:", error);
           setHasCameraPermission(false);
-          toast({
-            variant: "destructive",
-            title: "Camera Access Denied",
-            description: "Please enable camera permissions in your browser settings.",
-          });
         }
       };
       getCameraPermission();
@@ -52,7 +55,25 @@ export function ScanQrCodeDialog() {
         }
       }
     }
-  }, [open, toast]);
+  }, [open]);
+
+  const handleScanSimulation = () => {
+    // This simulates a successful scan after a delay
+    setTimeout(() => {
+        setScannedData('{"studentId":"1","watchedVideos":["1"]}');
+        toast({
+            title: "Progress Updated",
+            description: "Ravi Kumar's progress has been synced.",
+        });
+    }, 1500);
+  };
+  
+  useEffect(() => {
+      if(hasCameraPermission && open && !scannedData) {
+          handleScanSimulation();
+      }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasCameraPermission, open, scannedData]);
 
   const handleManualUpload = () => {
     // This is a placeholder for manual QR code image upload
@@ -86,17 +107,27 @@ export function ScanQrCodeDialog() {
             </div>
           ) : (
             <>
-              <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-secondary">
-                <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-2/3 h-2/3 border-4 border-dashed border-primary/50 rounded-lg" />
-                </div>
+              <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-secondary flex items-center justify-center">
+                {hasCameraPermission ? (
+                    <>
+                        <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div className="w-2/3 h-2/3 border-4 border-dashed border-primary/50 rounded-lg" />
+                        </div>
+                        <div className="absolute bottom-2 text-white bg-black/50 px-2 py-1 rounded-md text-sm">Simulating scan...</div>
+                    </>
+                ) : (
+                    <div className="text-center text-muted-foreground p-4">
+                        <p>Camera access not granted.</p>
+                        <p className="text-xs">Please allow camera access in your browser settings or use manual upload.</p>
+                    </div>
+                )}
               </div>
               {hasCameraPermission === false && (
                 <Alert variant="destructive">
-                  <AlertTitle>Camera Access Required</AlertTitle>
+                  <AlertTitle>Camera Access Denied</AlertTitle>
                   <AlertDescription>
-                    Please allow camera access to use this feature. You can use manual upload instead.
+                    You must allow camera access to use the scanner. You can use manual upload instead.
                   </AlertDescription>
                 </Alert>
               )}
@@ -117,4 +148,3 @@ export function ScanQrCodeDialog() {
     </Dialog>
   );
 }
-

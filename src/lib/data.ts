@@ -56,7 +56,19 @@ export async function getSummaryStats() {
 }
 
 export async function getEngagementData() {
-    return [];
+    // Generate sample data for the last 7 days
+    const data = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        data.push({
+            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            active: Math.floor(Math.random() * (i + 1) * 3) + 5, // Random active students
+            completed: Math.floor(Math.random() * (i + 1) * 2) + 2, // Random completed lessons
+        });
+    }
+    return data;
 }
 
 export async function getTimetable(): Promise<TimetableEntry[]> {
