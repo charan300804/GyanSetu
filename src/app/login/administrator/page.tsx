@@ -22,7 +22,7 @@ export default function AdministratorLoginPage() {
   const handleLogin = async (role: "teacher" | "faculty" | "principal") => {
     // In a real app, you'd have a specific login form for each administrator type.
     // For this prototype, we'll simulate a successful login and redirect.
-    const result = await login(`${role}@example.com`, "password", role);
+    const result = await login(`${role}`, "password", role);
 
     if (result.success) {
       toast({
@@ -37,6 +37,7 @@ export default function AdministratorLoginPage() {
       } else if (role === 'principal') {
         userId = "p-1";
       }
+      sessionStorage.setItem('isAuthenticated', 'true');
       sessionStorage.setItem('userType', role);
       sessionStorage.setItem('userId', userId);
 

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -35,6 +36,9 @@ export default function StudentLoginPage() {
         title: "Login Successful",
         description: "Redirecting to your dashboard...",
       });
+      sessionStorage.setItem('isAuthenticated', 'true');
+      sessionStorage.setItem('userType', 'student');
+      sessionStorage.setItem('userId', studentId);
       router.push("/student/dashboard");
     } else {
       toast({

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -36,6 +37,10 @@ export default function ParentLoginPage() {
         title: "Login Successful",
         description: "Redirecting to your child's dashboard...",
       });
+       sessionStorage.setItem('isAuthenticated', 'true');
+       sessionStorage.setItem('userType', 'parent');
+       sessionStorage.setItem('userId', 'p-1'); // Mock parent ID
+       sessionStorage.setItem('studentId', studentId); // Store child's ID
       router.push("/parent/dashboard");
     } else {
       toast({

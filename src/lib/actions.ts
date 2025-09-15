@@ -4,10 +4,11 @@
 import { summarizeStudentPerformance } from "@/ai/flows/summarize-student-performance";
 import type { SummarizeStudentPerformanceInput } from "@/ai/flows/summarize-student-performance";
 import { getFirebaseAdmin } from "./firebase-admin";
-import type { Quiz } from "./types";
+import type { Quiz, Teacher } from "./types";
+import { FieldValue } from "firebase-admin/firestore";
 
 type Role = "student" | "parent" | "teacher" | "faculty" | "principal";
-export type UserRole = 'Class Teacher' | 'Subject Teacher';
+export type UserRole = 'Class Teacher' | 'Subject Teacher' | 'Principal';
 
 
 export async function generateStudentSummary(input: SummarizeStudentPerformanceInput) {
@@ -15,7 +16,6 @@ export async function generateStudentSummary(input: SummarizeStudentPerformanceI
     const result = await summarizeStudentPerformance(input);
     return { success: true, summary: result.summary };
   } catch (error) {
-    console.error("Error generating student summary:", error);
     return { success: false, error: "Failed to generate summary. Please try again." };
   }
 }
@@ -26,11 +26,19 @@ export async function generateStudentSummary(input: SummarizeStudentPerformanceI
 // and generate JWTs with custom claims for roles.
 
 export async function login(identifier: string, password?: string, role?: Role) {
-    // In a real app:
-    // 1. Validate credentials against your user database.
-    // 2. If valid, get the user's role.
-    // 3. Use Firebase Admin to create a custom JWT with the role as a claim.
-    // 4. Return the token to the client to be stored securely (e.g., in an httpOnly cookie).
+    const admin = await getFirebaseAdmin();
+    const auth = admin.auth();
+    // In this prototype, we'll use the identifier to find a user document.
+    // The password is not checked.
+    try {
+        const user = await auth.getUserByEmail(`${identifier}@example.com`);
+        if(user) {
+            return { success: true, message: `Logged in as ${role}` };
+        }
+    } catch (e) {
+        // User not found, let's check our seeded users.
+    }
+
     if (!identifier) {
         return { success: false, error: "Invalid credentials provided."}
     }
@@ -40,65 +48,111 @@ export async function login(identifier: string, password?: string, role?: Role) 
 }
 
 export async function registerStudent(input: { studentId: string, tempPassword: string, newPassword: string }) {
-     // In a real app:
-    // 1. Find the student record by studentId.
-    // 2. Validate the provided temporary password.
-    // 3. Hash the new password and update the user record.
-    // 4. Mark the account as 'activated'.
-    if (!input.studentId || !input.tempPassword || !input.newPassword) {
+    const { studentId, tempPassword, newPassword } = input;
+    if (!studentId || !tempPassword || !newPassword) {
         return { success: false, error: "Missing required registration fields." };
     }
     
-    // Simulate temporary password validation
-    if (input.tempPassword !== 'password') { // Assuming 'password' is the temporary password for all
-        return { success: false, error: "Invalid Student ID or temporary password." };
+    const admin = await getFirebaseAdmin();
+    const db = admin.firestore();
+    const studentRef = db.collection('students').doc(studentId);
+    const studentDoc = await studentRef.get();
+
+    if (!studentDoc.exists) {
+        return { success: false, error: "Invalid Student ID." };
     }
 
-    // Simulate a successful registration
-    return { success: true, userId: `student-${input.studentId}` };
+    const studentData = studentDoc.data() as any;
+
+    if (studentData.tempPassword !== tempPassword) {
+        return { success: false, error: "Invalid temporary password." };
+    }
+    
+    await admin.auth().createUser({
+        uid: studentId,
+        email: studentData.email,
+        password: newPassword,
+        displayName: studentData.name
+    });
+
+    await studentRef.update({
+      tempPassword: FieldValue.delete(), // Remove temp password
+      activated: true,
+    });
+
+    return { success: true, userId: studentId };
 }
 
 export async function addUser(input: { teacherId: string; password: string; role: UserRole }) {
-    // In a real app, you would create the user in your database with a hashed password
-    if (!input.teacherId || !input.password || !input.role) {
+    const { teacherId, password, role } = input;
+     if (!teacherId || !password || !role) {
         return { success: false, error: "Missing required fields." };
     }
-    // This now returns a partial user object. The teacher will fill in the rest.
-    return { success: true, user: { id: input.teacherId, role: input.role } };
+    
+    const admin = await getFirebaseAdmin();
+    const auth = admin.auth();
+    const db = admin.firestore();
+
+    try {
+        await auth.createUser({
+            uid: teacherId,
+            password: password,
+            // Email will be set by the teacher later. For now, use a placeholder.
+            email: `${teacherId}@example.com`, 
+        });
+
+        await db.collection('teachers').doc(teacherId).set({
+            id: teacherId,
+            role: role,
+            name: 'New User',
+            email: `${teacherId}@example.com`,
+            avatar: `https://picsum.photos/seed/${teacherId}/100/100`,
+            imageHint: 'portrait person'
+        });
+
+        return { success: true, user: { id: teacherId, role } };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
 }
 
 export async function updateUser(id: string, input: { name: string, email: string, role: UserRole }) {
-    // In a real app, you would update the user in your database
-     if (!input.name || !input.email || !input.role) {
+    const { name, email, role } = input;
+     if (!name || !email || !role) {
         return { success: false, error: "Missing required fields." };
     }
-    return { success: true, user: { ...input, id, avatar: `https://picsum.photos/seed/${id}/100/100` } };
+    const admin = await getFirebaseAdmin();
+    const db = admin.firestore();
+    const auth = admin.auth();
+
+    try {
+        await auth.updateUser(id, { displayName: name, email });
+        await db.collection('teachers').doc(id).update({ name, email, role });
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
 }
 
 export async function addQuiz(quiz: Omit<Quiz, 'id'>) {
-    const newQuiz: Quiz = { ...quiz, id: `quiz-${Date.now()}` };
-    // In a real app, you'd save this to your database
+    const admin = await getFirebaseAdmin();
+    const db = admin.firestore();
+    const newQuizRef = db.collection('quizzes').doc();
+    const newQuiz: Quiz = { ...quiz, id: newQuizRef.id };
+    await newQuizRef.set(newQuiz);
     return { success: true, quiz: newQuiz };
 }
 
 export async function updateQuiz(id: string, quiz: Partial<Quiz>) {
-    // In a real app, you'd update this in your database
+    const admin = await getFirebaseAdmin();
+    const db = admin.firestore();
+    await db.collection('quizzes').doc(id).update(quiz);
     return { success: true, quiz: { ...quiz, id } };
 }
 
 export async function deleteQuiz(id: string) {
-    // In a real app, you'd delete this from your database
-    return { success: true };
-}
-
-
-export async function createSession(uid: string, role: string) {
-    // This function would be called after a successful login.
-    // It would create a session cookie/token containing the JWT.
     const admin = await getFirebaseAdmin();
-    const token = await admin.auth().createCustomToken(uid, { role });
-    
-    // In a real app, you would set this token in an httpOnly cookie
+    const db = admin.firestore();
+    await db.collection('quizzes').doc(id).delete();
     return { success: true };
 }
-

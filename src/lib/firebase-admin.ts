@@ -1,3 +1,4 @@
+
 import "server-only";
 import admin from "firebase-admin";
 
@@ -31,14 +32,13 @@ export async function getFirebaseAdmin() {
   try {
     app = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
+      databaseURL: `https://studio-7874095259-70480.firebaseio.com`,
     });
-    console.log("Firebase Admin initialized successfully.");
   } catch (error: any) {
     // This can happen if the app is already initialized, especially with HMR.
     if (error.code === 'app/duplicate-app') {
         app = admin.app();
     } else {
-        console.error("Firebase Admin initialization error:", error);
         throw error;
     }
   }
