@@ -13,13 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { registerStudent } from "@/lib/actions";
@@ -29,11 +22,10 @@ export default function StudentRegistrationPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: "",
-    class: "",
     studentId: "",
-    password: "",
-    confirmPassword: "",
+    tempPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,33 +33,28 @@ export default function StudentRegistrationPage() {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleClassChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, class: value }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.newPassword !== formData.confirmNewPassword) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Passwords do not match.",
+        description: "New passwords do not match.",
       });
       return;
     }
     setIsLoading(true);
 
     const result = await registerStudent({
-      fullName: formData.fullName,
       studentId: formData.studentId,
-      password: formData.password,
-      className: formData.class,
+      tempPassword: formData.tempPassword,
+      newPassword: formData.newPassword,
     });
 
     if (result.success) {
       toast({
         title: "Registration Successful",
-        description: "Please log in with your new credentials.",
+        description: "Your account is activated. Please log in with your new password.",
       });
       router.push("/login/student");
     } else {
@@ -97,37 +84,13 @@ export default function StudentRegistrationPage() {
                 Student Registration
               </CardTitle>
               <CardDescription>
-                Create your account to get started with GyanSetu.
+                Activate your account using the credentials from your school.
               </CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input
-                id="fullName"
-                placeholder="Ravi Kumar"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="class">Class</Label>
-              <Select onValueChange={handleClassChange} value={formData.class}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your class" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10a">Class 10A</SelectItem>
-                  <SelectItem value="10b">Class 10B</SelectItem>
-                  <SelectItem value="9a">Class 9A</SelectItem>
-                  <SelectItem value="9b">Class 9B</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
             <div className="grid gap-2">
               <Label htmlFor="studentId">Student ID</Label>
               <Input
@@ -139,27 +102,38 @@ export default function StudentRegistrationPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="tempPassword">Temporary Password</Label>
               <Input
-                id="password"
+                id="tempPassword"
                 type="password"
-                value={formData.password}
+                placeholder="The temporary password from your school"
+                value={formData.tempPassword}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+             <div className="grid gap-2">
+              <Label htmlFor="newPassword">New Password</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                value={formData.newPassword}
                 onChange={handleInputChange}
                 required
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
               <Input
-                id="confirmPassword"
+                id="confirmNewPassword"
                 type="password"
-                value={formData.confirmPassword}
+                value={formData.confirmNewPassword}
                 onChange={handleInputChange}
                 required
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Registering..." : "Register"}
+              {isLoading ? "Registering..." : "Activate Account"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">

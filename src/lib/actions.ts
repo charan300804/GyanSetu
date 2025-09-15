@@ -41,16 +41,22 @@ export async function login(identifier: string, password?: string, role?: Role) 
     return { success: true, message: `Logged in as ${role}` };
 }
 
-export async function registerStudent(input: { fullName: string, studentId: string, password: string, className: string }) {
+export async function registerStudent(input: { studentId: string, tempPassword: string, newPassword: string }) {
      // In a real app:
-    // 1. Check if studentId already exists.
-    // 2. Hash the password.
-    // 3. Create a new user record in your database.
-    // 4. Optionally, use Firebase Admin SDK to create a corresponding Firebase Auth user.
-    console.log(`Simulating registration for ${input.fullName} (${input.studentId})`);
+    // 1. Find the student record by studentId.
+    // 2. Validate the provided temporary password.
+    // 3. Hash the new password and update the user record.
+    // 4. Mark the account as 'activated'.
+    console.log(`Simulating activation for student: ${input.studentId}`);
 
-    if (!input.studentId || !input.password || !input.fullName) {
+    // Simulate checking for required fields
+    if (!input.studentId || !input.tempPassword || !input.newPassword) {
         return { success: false, error: "Missing required registration fields." };
+    }
+    
+    // Simulate temporary password validation
+    if (input.tempPassword !== 'password') { // Assuming 'password' is the temporary password for all
+        return { success: false, error: "Invalid Student ID or temporary password." };
     }
 
     // Simulate a successful registration
