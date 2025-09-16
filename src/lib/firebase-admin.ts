@@ -25,7 +25,7 @@ export async function getFirebaseAdmin() {
     !serviceAccount.privateKey
   ) {
     throw new Error(
-      "Firebase Admin credentials are not set in the environment variables."
+      "Firebase Admin credentials are not set in the environment variables. Please ensure FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY are set."
     );
   }
 
@@ -38,7 +38,8 @@ export async function getFirebaseAdmin() {
     if (error.code === 'app/duplicate-app') {
         app = admin.app();
     } else {
-        throw error;
+        console.error("Firebase Admin Initialization Error:", error);
+        throw new Error(`Failed to initialize Firebase Admin SDK: ${error.message}`);
     }
   }
 
