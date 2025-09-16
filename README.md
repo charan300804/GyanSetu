@@ -4,6 +4,32 @@ GyanSetu is a full-stack digital learning platform designed to bridge educationa
 
 The platform leverages AI (via Genkit) to provide insightful performance summaries, helping teachers and parents understand a student's academic journey, highlighting strengths and areas for improvement.
 
+---
+
+## ⚠️ Mandatory Setup Steps to Run the App
+
+To resolve the common `PERMISSION_DENIED` and `Firebase Admin credentials are not set` errors, you **must** complete the following two steps after setting up your Firebase project.
+
+### 1. Configure Your Environment File (`.env`)
+
+You must replace the placeholder values in the `.env` file with your **actual** Firebase Admin credentials.
+
+- Open the `.env` file in the root of the project.
+- Follow **Step 3A** in the "Getting Started" guide below to get your `project_id`, `client_email`, and `private_key`.
+- Paste them into the `.env` file. The `private_key` must be enclosed in double quotes.
+
+### 2. Deploy Firestore Security Rules
+
+The app will not have permission to read or write to the database until you deploy the security rules.
+
+- Make sure you have the Firebase CLI installed and are logged in (`npm install -g firebase-tools` and `firebase login`).
+- In your terminal, at the root of the project, run this command:
+  ```bash
+  firebase deploy --only firestore:rules
+  ```
+
+---
+
 ## Core Features
 
 ### For Teachers & Faculty
@@ -61,20 +87,6 @@ Follow these instructions to set up and run the project locally.
     - In your project, navigate to **Build > Firestore Database** and click **Create database**. Start in **Production mode** and choose a location.
     - Go to **Build > Authentication** and click **Get started**. Enable the **Email/Password** sign-in provider.
 
-3.  **Update Firestore Security Rules**:
-    - Go to the **Rules** tab in the Firestore section.
-    - Replace the existing rules with the following to allow authenticated users to read/write for development purposes. Click **Publish**.
-    ```
-    rules_version = '2';
-    service cloud.firestore {
-      match /databases/{database}/documents {
-        match /{document=**} {
-          allow read, write: if request.auth != null;
-        }
-      }
-    }
-    ```
-
 ---
 
 ### Step 2: Get Firebase Credentials
@@ -105,16 +117,41 @@ You need two sets of credentials: one for the server (Admin SDK) and one for the
     ```env
     FIREBASE_PROJECT_ID="your-project-id"
     FIREBASE_CLIENT_EMAIL="your-client-email@example.com"
-    FIREBASE_PRIVATE_KEY="your-private-key"
+    FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY_CONTENT\n-----END PRIVATE KEY-----\n"
     ```
-    **Important**: The `private_key` is very long and must be enclosed in double quotes (`"`). It starts with `-----BEGIN PRIVATE KEY-----\n` and ends with `\n-----END PRIVATE KEY-----\n`. Copy the entire string, making sure to preserve the `\n` characters.
+    **Important**: The `private_key` is very long and must be enclosed in double quotes (`"`). Copy the entire string from the JSON file, making sure to preserve the `\n` characters.
 
 2.  **Set up Client Environment (`src/lib/firebase.ts`)**:
-    Open the file `src/lib/firebase.ts`. Replace the placeholder `firebaseConfig` object with the one you copied from the Firebase console (Step 2B).
+    Open the file `src/lib/firebase.ts`. The placeholder `firebaseConfig` object has already been populated. Ensure it matches the one you copied from the Firebase console (Step 2B).
 
 ---
 
-### Step 4: Install Dependencies & Seed Database
+### Step 4: Set Firestore Security Rules (Critical Fix for Permissions)
+
+The app will fail with a `PERMISSION_DENIED` error if your Firestore rules are too restrictive. For development, you need to allow authenticated users to read and write data.
+
+1.  **Check the Rules File**:
+    The `firestore.rules` file in the project root should contain:
+    ```
+    rules_version = '2';
+    service cloud.firestore {
+      match /databases/{database}/documents {
+        match /{document=**} {
+          allow read, write: if request.auth != null;
+        }
+      }
+    }
+    ```
+
+2.  **Deploy the Rules**:
+    In your terminal, at the root of the project, run the following command. This uploads the rules to your Firebase project and is **mandatory** to resolve permission errors.
+    ```bash
+    firebase deploy --only firestore:rules
+    ```
+
+---
+
+### Step 5: Install Dependencies & Seed Database
 
 1.  **Install Packages**:
     Open your terminal in the project root and run:
@@ -122,16 +159,16 @@ You need two sets of credentials: one for the server (Admin SDK) and one for the
     npm install
     ```
 
-2.  **Seed the Database**:
-    To populate Firestore with initial sample data (e.g., users, courses), first add data to the arrays in `src/lib/seed-db.ts`, then run:
+2.  **Seed the Database (Optional)**:
+    To populate Firestore with initial sample data (e.g., users, courses), add data to the arrays in `src/lib/seed-db.ts`, then run:
     ```bash
     npm run db:seed
     ```
-    This will create the necessary users and collections in your Firestore database. Note: by default the seed file is empty.
+    Note: By default, the seed file is empty. Add data to it before running the command if you want sample content.
 
 ---
 
-### Step 5: Run the Application
+### Step 6: Run the Application
 
 You can now start the development server:
 
@@ -141,7 +178,5 @@ npm run dev
 
 The application will be available at `http://localhost:9002`.
 
-You can now use the various login portals:
-- **Student Login**: Use the credentials you added to `src/lib/seed-db.ts` or use the registration flow.
-- **Administrator Login**: Use the "teacher" or "faculty" login, which will use the seeded teacher accounts.
-- **Parent Login**: Use the student's credentials to log in as a parent.
+You can now use the various login portals. If you haven't seeded the database, you will need to start by creating users via the UI (e.g., a Principal can create Teacher accounts).
+```
