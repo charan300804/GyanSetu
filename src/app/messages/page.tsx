@@ -25,33 +25,14 @@ type Conversations = {
   [contactId: string]: Message[];
 };
 
-const initialContacts: Contact[] = [
-  { id: '1', name: 'Principal', role: 'GyanSetu School', avatar: 'https://picsum.photos/seed/principal/100/100' },
-  { id: '2', name: 'Parent of Ravi Kumar', role: 'Parent/Guardian', avatar: 'https://picsum.photos/seed/parent/100/100' },
-  { id: '3', name: 'Mr. Sharma', role: 'Class Teacher, 10A', avatar: 'https://picsum.photos/seed/teacher/100/100' },
-  { id: '4', name: 'Ms. Gupta', role: 'Science Faculty', avatar: 'https://picsum.photos/seed/faculty1/100/100' },
-];
+const initialContacts: Contact[] = [];
 
-const initialConversations: Conversations = {
-  '1': [
-      { from: 'other', text: 'Good morning. Please provide the attendance report for Class 10A.' },
-      { from: 'me', text: 'Good morning. I will send it over shortly.' },
-  ],
-  '2': [
-      { from: 'other', text: 'Hello! I wanted to discuss Ravi\'s progress in Science.' },
-      { from: 'me', text: 'Of course. He is doing well, but I have a few suggestions.' },
-      { from: 'other', text: 'That would be great. Please let me know.' },
-  ],
-  '3': [],
-  '4': [
-      { from: 'other', text: 'Can we sync up on the curriculum for the next month?' },
-  ]
-};
+const initialConversations: Conversations = {};
 
 export default function MessagesPage() {
   const [contacts] = useState<Contact[]>(initialContacts);
   const [conversations, setConversations] = useState<Conversations>(initialConversations);
-  const [selectedContactId, setSelectedContactId] = useState<string | null>('2');
+  const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
 
   const selectedContact = contacts.find(c => c.id === selectedContactId);
@@ -61,6 +42,10 @@ export default function MessagesPage() {
     if (!newMessage.trim() || !selectedContactId) return;
 
     const newConversations = { ...conversations };
+    if (!newConversations[selectedContactId]) {
+      newConversations[selectedContactId] = [];
+    }
+    
     newConversations[selectedContactId] = [
       ...newConversations[selectedContactId],
       { from: 'me', text: newMessage },
@@ -84,6 +69,7 @@ export default function MessagesPage() {
           </CardHeader>
           <CardContent className="flex-1 p-0">
             <ScrollArea className="h-full">
+                {contacts.length > 0 ? (
               <div className="space-y-2 p-2">
                 {contacts.map(contact => (
                   <Button
@@ -105,6 +91,11 @@ export default function MessagesPage() {
                   </Button>
                 ))}
               </div>
+              ) : (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                    <p>No contacts found.</p>
+                </div>
+              )}
             </ScrollArea>
           </CardContent>
         </Card>
