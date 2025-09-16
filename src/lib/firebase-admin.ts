@@ -32,7 +32,6 @@ export async function getFirebaseAdmin() {
   try {
     app = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
-      databaseURL: `https://studio-7874095259-70480.firebaseio.com`,
     });
   } catch (error: any) {
     // This can happen if the app is already initialized, especially with HMR.

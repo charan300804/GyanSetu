@@ -1,10 +1,11 @@
-import Link from 'next/link';
-import Image from 'next/image';
+
+'use client';
+
+import { useEffect, useState } from 'react';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, BookOpen, CalendarCheck, Star, Users, QrCode } from 'lucide-react';
-import { getStudentById, getCourses, getPerformanceByStudentId, getLessonVideos } from '@/lib/data';
+import { BookOpen, CalendarCheck, Star, Users } from 'lucide-react';
+import { getStudentById, getCourses, getPerformanceByStudentId } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -22,29 +23,64 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { PerformanceSummary } from '@/app/student/[id]/performance-summary';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import type { Student, Course, Performance as PerformanceType } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function ParentDashboardPage() {
-  const studentId = '1'; // Hardcoded for now
-  const student = await getStudentById(studentId);
-  if (!student) {
+
+export default function ParentDashboardPage() {
+  const [student, setStudent] = useState<Student | null | undefined>(undefined);
+  const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
+
+  useEffect(() => {
+    const studentId = sessionStorage.getItem('studentId');
+    if (!studentId) {
+      // Or redirect to login
+      setStudent(null);
+      return;
+    }
+
+    async function fetchData() {
+      const studentData = await getStudentById(studentId);
+      if (!studentData) {
+        setStudent(null);
+        return;
+      }
+      setStudent(studentData);
+
+      const allCourses = await getCourses();
+      const studentPerformances = await getPerformanceByStudentId(studentData.id);
+      
+      const courses = studentPerformances.map((p) => {
+        const course = allCourses.find((c) => c.id === p.courseId);
+        return { ...course, ...p };
+      });
+      setEnrolledCourses(courses);
+    }
+
+    fetchData();
+  }, []);
+
+  if (student === undefined) {
+     return (
+         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+            <Skeleton className="h-8 w-64" />
+             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid auto-rows-max items-start gap-4 lg:col-span-2">
+                    <Card><CardHeader><Skeleton className="h-40 w-full" /></CardHeader></Card>
+                    <Card><CardHeader><Skeleton className="h-48 w-full" /></CardHeader></Card>
+                </div>
+                <div className="grid auto-rows-max items-start gap-4">
+                     <Card><CardHeader><Skeleton className="h-64 w-full" /></CardHeader></Card>
+                </div>
+            </div>
+         </main>
+    );
+  }
+
+  if (student === null) {
     notFound();
   }
 
-  const allCourses = await getCourses();
-  const studentPerformances = await getPerformanceByStudentId(student.id);
-
-  const enrolledCourses = studentPerformances.map((p) => {
-    const course = allCourses.find((c) => c.id === p.courseId);
-    return { ...course, ...p };
-  });
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -132,7 +168,7 @@ export default async function ParentDashboardPage() {
         <div className="grid auto-rows-max items-start gap-4">
           <PerformanceSummary
             studentName={student.name}
-            moduleResults={studentPerformances.flatMap((p) => p.modules)}
+            moduleResults={enrolledCourses.flatMap((p) => p.modules)}
           />
         </div>
       </div>

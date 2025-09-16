@@ -1,7 +1,10 @@
 
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, BookOpen, CalendarCheck, Star, Users, QrCode } from 'lucide-react';
 import { getStudentById, getCourses, getPerformanceByStudentId, getLessonVideos } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -31,43 +34,101 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Student, Course, Performance as PerformanceType, LessonVideo } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function StudentProfilePage({
+export default function StudentProfilePage({
   params,
 }: {
   params: { id: string };
 }) {
-  const student = await getStudentById(params.id);
-  if (!student) {
-    notFound();
+  const router = useRouter();
+  const [student, setStudent] = useState<Student | undefined | null>(undefined);
+  const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
+  const [userType, setUserType] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUserType(sessionStorage.getItem('userType'));
+
+    async function fetchData() {
+        const studentData = await getStudentById(params.id);
+        if (!studentData) {
+            setStudent(null);
+            return;
+        }
+        setStudent(studentData);
+        
+        const allCourses = await getCourses();
+        const studentPerformances = await getPerformanceByStudentId(studentData.id);
+        const videos = await getLessonVideos();
+
+        const courses = studentPerformances.map((p) => {
+            const course = allCourses.find((c) => c.id === p.courseId);
+            return { ...course, ...p };
+        });
+        setEnrolledCourses(courses);
+
+        const watchedVideos = videos.filter(v => v.watched);
+        
+        const fullProgressData = {
+            student: studentData,
+            performance: courses,
+            watchedVideoIds: watchedVideos.map(v => v.id),
+        };
+
+        const qrData = encodeURIComponent(JSON.stringify(fullProgressData));
+        setQrCodeUrl(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}`);
+    }
+
+    fetchData();
+
+  }, [params.id]);
+
+
+  const getBackPath = () => {
+    switch (userType) {
+        case 'parent':
+            return '/parent/dashboard';
+        case 'student':
+            return '/student/dashboard';
+        case 'principal':
+        case 'teacher':
+        case 'faculty':
+        default:
+            return '/';
+    }
   }
 
-  const allCourses = await getCourses();
-  const studentPerformances = await getPerformanceByStudentId(student.id);
-  const videos = await getLessonVideos();
+  if (student === undefined) {
+    return (
+         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+            <div className="flex items-center gap-4">
+                <Skeleton className="h-7 w-7 rounded-full" />
+                <Skeleton className="h-6 w-48" />
+            </div>
+             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid auto-rows-max items-start gap-4 lg:col-span-2">
+                    <Card><CardHeader><Skeleton className="h-32 w-full" /></CardHeader></Card>
+                    <Card><CardHeader><Skeleton className="h-48 w-full" /></CardHeader></Card>
+                </div>
+                <div className="grid auto-rows-max items-start gap-4">
+                     <Card><CardHeader><Skeleton className="h-64 w-full" /></CardHeader></Card>
+                </div>
+            </div>
+         </main>
+    );
+  }
 
-  const enrolledCourses = studentPerformances.map((p) => {
-    const course = allCourses.find((c) => c.id === p.courseId);
-    return { ...course, ...p };
-  });
-
-  const watchedVideos = videos.filter(v => v.watched);
-  
-  // Consolidate all student data for the QR code
-  const fullProgressData = {
-    student: student,
-    performance: enrolledCourses,
-    watchedVideoIds: watchedVideos.map(v => v.id),
-  };
-
-  const qrCodeData = encodeURIComponent(JSON.stringify(fullProgressData));
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrCodeData}`;
+  if (student === null) {
+    notFound();
+  }
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" className="h-7 w-7" asChild>
-          <Link href="/student/dashboard">
+          <Link href={getBackPath()}>
             <ArrowLeft className="h-4 w-4" />
             <span className="sr-only">Back</span>
           </Link>
@@ -77,10 +138,12 @@ export default async function StudentProfilePage({
         </h1>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="outline" size="icon" className="h-8 w-8">
-              <QrCode className="h-4 w-4" />
-              <span className="sr-only">Show Progress QR Code</span>
-            </Button>
+             {qrCodeUrl && (
+                <Button variant="outline" size="icon" className="h-8 w-8">
+                    <QrCode className="h-4 w-4" />
+                    <span className="sr-only">Show Progress QR Code</span>
+                </Button>
+             )}
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
@@ -90,7 +153,11 @@ export default async function StudentProfilePage({
               </DialogDescription>
             </DialogHeader>
             <div className="flex justify-center p-4">
-              <Image src={qrCodeUrl} alt="Progress QR Code" width={200} height={200} />
+              {qrCodeUrl ? (
+                <Image src={qrCodeUrl} alt="Progress QR Code" width={200} height={200} />
+              ) : (
+                <Skeleton className="h-[200px] w-[200px]" />
+              )}
             </div>
           </DialogContent>
         </Dialog>
@@ -174,7 +241,7 @@ export default async function StudentProfilePage({
         <div className="grid auto-rows-max items-start gap-4">
           <PerformanceSummary
             studentName={student.name}
-            moduleResults={studentPerformances.flatMap((p) => p.modules)}
+            moduleResults={enrolledCourses.flatMap((p) => p.modules)}
           />
         </div>
       </div>

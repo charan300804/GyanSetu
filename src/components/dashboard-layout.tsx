@@ -90,6 +90,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     sessionStorage.removeItem('isAuthenticated');
     sessionStorage.removeItem('userType');
     sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('studentId');
     router.push('/login');
   };
 
@@ -157,7 +158,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     // Handle exact matches for root-level dashboards or specific pages
     if (path === '/' && pathname !== '/') return false;
     if (path === '/' && pathname === '/') return true;
-    if (['/student/dashboard', '/parent/dashboard', '/principal/dashboard', '/settings'].includes(path)) {
+    if (['/student/dashboard', '/parent/dashboard', '/principal/dashboard', '/settings', '/messages'].includes(path)) {
         return pathname === path;
     }
     // Handle student profile being active for any student ID
