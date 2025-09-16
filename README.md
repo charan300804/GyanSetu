@@ -179,4 +179,3 @@ npm run dev
 The application will be available at `http://localhost:9002`.
 
 You can now use the various login portals. If you haven't seeded the database, you will need to start by creating users via the UI (e.g., a Principal can create Teacher accounts).
-```
