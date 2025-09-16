@@ -10,9 +10,6 @@ export async function getFirebaseAdmin() {
     return app;
   }
 
-  // These variables are stored in .env and are not checked into source control.
-  // In a deployed environment (like App Hosting), you would set these as
-  // environment variables.
   const serviceAccount = {
     projectId: process.env.FIREBASE_PROJECT_ID,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
@@ -22,10 +19,12 @@ export async function getFirebaseAdmin() {
   if (
     !serviceAccount.projectId ||
     !serviceAccount.clientEmail ||
-    !serviceAccount.privateKey
+    !serviceAccount.privateKey ||
+    serviceAccount.projectId === "your-project-id" ||
+    serviceAccount.clientEmail === "your-client-email@example.com"
   ) {
     throw new Error(
-      "Firebase Admin credentials are not set in the environment variables. Please ensure FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY are set."
+      "Firebase Admin credentials are not set or are still using placeholder values in the .env file. Please replace the placeholder values with your actual Firebase service account credentials."
     );
   }
 

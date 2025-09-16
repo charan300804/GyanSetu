@@ -1,4 +1,7 @@
 
+import { config } from 'dotenv';
+config();
+
 import { getFirebaseAdmin } from './firebase-admin';
 import { Student, Teacher, Course, Performance, TimetableEntry, Assignment, LessonVideo, Quiz } from './types';
 
