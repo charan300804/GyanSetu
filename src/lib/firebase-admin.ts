@@ -1,4 +1,5 @@
 
+"use server";
 import "server-only";
 import admin from "firebase-admin";
 
@@ -13,6 +14,9 @@ export async function getFirebaseAdmin() {
   const serviceAccount = {
     projectId: process.env.FIREBASE_PROJECT_ID,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    // The private key must have newline characters correctly formatted.
+    // When reading from .env, "\\n" can be interpreted as a literal string.
+    // This explicitly replaces it with the newline character `\n`.
     privateKey: (process.env.FIREBASE_PRIVATE_KEY || "").replace(/\\n/g, "\n"),
   };
 

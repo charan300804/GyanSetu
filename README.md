@@ -16,7 +16,15 @@ You must replace the placeholder values in the `.env` file with your **actual** 
 
 - Open the `.env` file in the root of the project.
 - Follow **Step 3A** in the "Getting Started" guide below to get your `project_id`, `client_email`, and `private_key`.
-- Paste them into the `.env` file. The `private_key` must be enclosed in double quotes.
+- Paste them into the `.env` file. **The `private_key` must be enclosed in double quotes.**
+
+**Example of a correct `.env` file:**
+```env
+FIREBASE_PROJECT_ID="your-actual-project-id"
+FIREBASE_CLIENT_EMAIL="your-service-account-email@your-project.iam.gserviceaccount.com"
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_VERY_LONG_PRIVATE_KEY_CONTENT_HERE\n-----END PRIVATE KEY-----\n"
+```
+**CRITICAL**: When you copy the `private_key` from the JSON file, ensure you copy the entire string, including the `-----BEGIN PRIVATE KEY-----`, `-----END PRIVATE KEY-----`, and all the `\n` characters. It must be pasted inside the double quotes (`"`).
 
 ### 2. Deploy Firestore Security Rules
 
