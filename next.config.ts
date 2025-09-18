@@ -1,7 +1,7 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  /* existing config options */
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -33,9 +33,11 @@ const nextConfig: NextConfig = {
         hostname: 'api.qrserver.com',
         port: '',
         pathname: '/**',
-      }
+      },
     ],
   },
+
+  allowedDevOrigins: ['10.121.116.1'],  // Add this line to allow the network IP
 };
 
 export default nextConfig;
