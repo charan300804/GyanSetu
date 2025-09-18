@@ -26,7 +26,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     const authStatus = checkUserAuth();
     setIsAuthenticated(authStatus.auth);
     setIsAuthChecked(authStatus.checked);
-  }, []);
+  }, [pathname]); // Re-check on path change to be safe
 
   useEffect(() => {
     // This effect runs when auth state is resolved or path changes.
@@ -64,6 +64,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     return null; 
   }
 
+  // If we are on a public page and authenticated, wait for redirect effect.
+  if (isPublicPage && isAuthenticated) {
+    return null;
+  }
+  
   if (isPublicPage) {
     return <>{children}</>;
   }
