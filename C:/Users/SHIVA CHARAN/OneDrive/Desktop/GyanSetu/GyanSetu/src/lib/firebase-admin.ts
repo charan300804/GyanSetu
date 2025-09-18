@@ -1,6 +1,6 @@
 
 "use server";
-import "server-only";
+
 import admin from "firebase-admin";
 
 // This is a singleton to ensure we only initialize the app once.
