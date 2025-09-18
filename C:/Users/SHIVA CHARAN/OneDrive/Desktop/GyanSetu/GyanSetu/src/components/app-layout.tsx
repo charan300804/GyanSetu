@@ -46,7 +46,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     break;
                 case 'teacher':
                 case 'faculty':
-                    router.push('/'); // Teacher dashboard is at root
+                    router.push('/'); // Teacher/Faculty dashboard is at root
                     break;
                 default:
                     router.push('/login');
