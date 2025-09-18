@@ -38,8 +38,9 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    allowedDevOrigins: ["http://10.54.232.1:9003"],
-  }
+    // This space is intentionally left blank for future experimental features.
+  },
+  allowedDevOrigins: ["http://10.54.232.1:9003"],
 };
 
 export default nextConfig;
