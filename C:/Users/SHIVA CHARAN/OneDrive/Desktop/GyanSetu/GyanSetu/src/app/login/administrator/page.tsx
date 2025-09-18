@@ -41,10 +41,11 @@ export default function AdministratorLoginPage() {
       sessionStorage.setItem('userType', role);
       sessionStorage.setItem('userId', userId);
 
-      // The app-layout will handle the final redirect.
-      // We just need to navigate away from the login page.
+      // Directly navigate to the correct dashboard
       if (role === "principal") {
         router.push("/principal/dashboard");
+      } else if (role === "faculty") {
+        router.push("/courses");
       } else {
         router.push("/");
       }

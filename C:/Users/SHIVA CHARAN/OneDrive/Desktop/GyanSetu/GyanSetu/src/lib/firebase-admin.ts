@@ -42,7 +42,12 @@ export async function getFirebaseAdmin() {
      }
   } catch (error: any) {
     console.error("Firebase Admin Initialization Error:", error);
-    throw new Error(`Failed to initialize Firebase Admin SDK: ${error.message}`);
+    // This can happen if the app is already initialized, especially with HMR.
+    if (error.code === 'app/duplicate-app') {
+        app = admin.app();
+    } else {
+        throw new Error(`Failed to initialize Firebase Admin SDK: ${error.message}`);
+    }
   }
 
   return app;

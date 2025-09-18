@@ -5,38 +5,37 @@ import { usePathname, useRouter } from 'next/navigation';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { useEffect, useState } from 'react';
 
-// A mock function to check if a user is authenticated.
-const checkUserAuth = () => {
-    if (typeof window === 'undefined') {
-        return { auth: false, checked: false };
-    }
-    // We use sessionStorage to persist the "login" state just for the current browser session.
-    return { auth: sessionStorage.getItem('isAuthenticated') === 'true', checked: true };
-}
-
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [authStatus, setAuthStatus] = useState<{ isAuthenticated: boolean; isChecked: boolean }>({
+    isAuthenticated: false,
+    isChecked: false,
+  });
 
   const isPublicPage = pathname.startsWith('/login') || pathname.startsWith('/register');
 
   useEffect(() => {
-    const authStatus = checkUserAuth();
-    setIsAuthenticated(authStatus.auth);
-    setIsAuthChecked(authStatus.checked);
-  }, [pathname]); // Re-check on path change
+    // This effect runs once on mount to check the initial auth state from sessionStorage.
+    const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
+    setAuthStatus({ isAuthenticated, isChecked: true });
+  }, []);
 
   useEffect(() => {
-    if (!isAuthChecked) {
-      return; // Don't do anything until auth state is checked
+    if (!authStatus.isChecked) {
+      // Don't do anything until the initial auth check is complete.
+      return;
     }
 
-    const userType = sessionStorage.getItem('userType');
+    // Redirect unauthenticated users from private pages to the login page.
+    if (!authStatus.isAuthenticated && !isPublicPage) {
+      router.push('/login');
+      return; // Stop further execution
+    }
 
-    // If authenticated, handle redirects from public pages to dashboards
-    if (isAuthenticated && isPublicPage) {
+    // Redirect authenticated users from public pages to their respective dashboards.
+    if (authStatus.isAuthenticated && isPublicPage) {
+      const userType = sessionStorage.getItem('userType');
       switch (userType) {
         case 'student':
           router.push('/student/dashboard');
@@ -48,41 +47,38 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           router.push('/principal/dashboard');
           break;
         case 'teacher':
-        case 'faculty':
           router.push('/');
           break;
+        case 'faculty':
+          router.push('/courses');
+          break;
         default:
-          // If userType is unknown, log them out as a fallback
+          // If userType is unknown or null, log them out as a fallback.
           sessionStorage.clear();
           router.push('/login');
           break;
       }
     }
-    // If not authenticated, redirect from private pages to login
-    else if (!isAuthenticated && !isPublicPage) {
-      router.push('/login');
-    }
+  }, [authStatus, isPublicPage, pathname, router]);
 
-  }, [isAuthChecked, isAuthenticated, isPublicPage, router, pathname]);
-
-
-  if (!isAuthChecked) {
-    // Render a loading state or nothing while checking auth.
-    // This prevents a flash of the login page on a refresh when authenticated.
-    return null; 
-  }
-  
-  // If we are on a public page, just render children (login, register)
-  // or wait for the redirect effect to kick in if authenticated.
-  if (isPublicPage) {
-    return isAuthenticated ? null : <>{children}</>;
-  }
-
-  // If we are on a private page and not authenticated, wait for redirect.
-  if (!isAuthenticated) {
+  if (!authStatus.isChecked) {
+    // Render nothing (or a loading spinner) while auth state is being determined.
+    // This prevents a "flash" of content.
     return null;
   }
-  
-  // If authenticated and on a private page, render the dashboard.
-  return <DashboardLayout>{children}</DashboardLayout>;
+
+  if (isPublicPage) {
+    // If we're on a public page, only show the content if the user is not authenticated.
+    // If they are authenticated, the effect above will handle the redirect, so we render nothing.
+    return authStatus.isAuthenticated ? null : <>{children}</>;
+  }
+
+  if (!isPublicPage && authStatus.isAuthenticated) {
+    // If on a private page and authenticated, show the dashboard layout.
+    return <DashboardLayout>{children}</DashboardLayout>;
+  }
+
+  // In all other cases (e.g., on a private page but not authenticated),
+  // the redirect effect is handling navigation, so we render nothing to avoid flashes.
+  return null;
 }
