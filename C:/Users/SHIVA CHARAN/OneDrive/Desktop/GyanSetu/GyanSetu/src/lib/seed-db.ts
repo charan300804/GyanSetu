@@ -122,7 +122,24 @@ async function seedDatabase() {
     const batch = db.batch();
 
     for (const item of data) {
-      const docRef = collectionRef.doc(item.id);
+      let docId;
+      if ('id' in item && item.id) {
+          docId = item.id;
+      } else if (name === 'performances') {
+          const perf = item as Performance;
+          docId = `${perf.studentId}_${perf.courseId}`;
+      } else if (name === 'timetable') {
+          const tt = item as TimetableEntry;
+          docId = tt.day;
+      } else {
+          // For collections without a predefined ID, Firestore can auto-generate one.
+          // However, for this script, we'll enforce IDs for consistency.
+          // If we hit this, we should add a case above.
+          console.warn(`No ID found for item in ${name}, skipping:`, item);
+          continue;
+      }
+
+      const docRef = collectionRef.doc(docId);
       batch.set(docRef, item);
     }
 
