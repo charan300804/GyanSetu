@@ -41,12 +41,14 @@ export default function AdministratorLoginPage() {
       sessionStorage.setItem('userType', role);
       sessionStorage.setItem('userId', userId);
 
-
-      if (role === "teacher" || role === "faculty") {
-        router.push("/");
-      } else if (role === "principal") {
+      // The app-layout will handle the final redirect.
+      // We just need to navigate away from the login page.
+      if (role === "principal") {
         router.push("/principal/dashboard");
+      } else {
+        router.push("/");
       }
+
     } else {
       toast({
         variant: "destructive",

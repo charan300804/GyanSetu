@@ -26,35 +26,43 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     const authStatus = checkUserAuth();
     setIsAuthenticated(authStatus.auth);
     setIsAuthChecked(authStatus.checked);
-  }, [pathname]); // Re-check on path change to be safe
+  }, [pathname]); // Re-check on path change
 
   useEffect(() => {
-    // This effect runs when auth state is resolved or path changes.
-    // It handles redirects.
-    if (isAuthChecked) {
-        if (isAuthenticated && isPublicPage) {
-            const userType = sessionStorage.getItem('userType');
-            switch (userType) {
-                case 'student':
-                    router.push('/student/dashboard');
-                    break;
-                case 'parent':
-                    router.push('/parent/dashboard');
-                    break;
-                case 'principal':
-                    router.push('/principal/dashboard');
-                    break;
-                case 'teacher':
-                case 'faculty':
-                    router.push('/'); // Teacher/Faculty dashboard is at root
-                    break;
-                default:
-                    router.push('/login');
-            }
-        } else if (!isAuthenticated && !isPublicPage) {
-            router.push('/login');
-        }
+    if (!isAuthChecked) {
+      return; // Don't do anything until auth state is checked
     }
+
+    const userType = sessionStorage.getItem('userType');
+
+    // If authenticated, handle redirects from public pages to dashboards
+    if (isAuthenticated && isPublicPage) {
+      switch (userType) {
+        case 'student':
+          router.push('/student/dashboard');
+          break;
+        case 'parent':
+          router.push('/parent/dashboard');
+          break;
+        case 'principal':
+          router.push('/principal/dashboard');
+          break;
+        case 'teacher':
+        case 'faculty':
+          router.push('/');
+          break;
+        default:
+          // If userType is unknown, log them out as a fallback
+          sessionStorage.clear();
+          router.push('/login');
+          break;
+      }
+    }
+    // If not authenticated, redirect from private pages to login
+    else if (!isAuthenticated && !isPublicPage) {
+      router.push('/login');
+    }
+
   }, [isAuthChecked, isAuthenticated, isPublicPage, router, pathname]);
 
 
@@ -63,20 +71,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     // This prevents a flash of the login page on a refresh when authenticated.
     return null; 
   }
-
-  // If we are on a public page and authenticated, wait for redirect effect.
-  if (isPublicPage && isAuthenticated) {
-    return null;
-  }
   
+  // If we are on a public page, just render children (login, register)
+  // or wait for the redirect effect to kick in if authenticated.
   if (isPublicPage) {
-    return <>{children}</>;
+    return isAuthenticated ? null : <>{children}</>;
   }
 
+  // If we are on a private page and not authenticated, wait for redirect.
   if (!isAuthenticated) {
-    // While redirecting, show nothing to prevent flashing the dashboard layout.
     return null;
   }
   
+  // If authenticated and on a private page, render the dashboard.
   return <DashboardLayout>{children}</DashboardLayout>;
 }
