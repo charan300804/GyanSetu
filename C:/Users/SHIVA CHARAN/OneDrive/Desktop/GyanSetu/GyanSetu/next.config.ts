@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -37,8 +38,9 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    allowedDevOrigins: ["http://10.54.232.1:9003"],
+    // This key might be used for other experimental features later.
   },
+  allowedDevOrigins: ["http://10.54.232.1:9003"],
 };
 
 export default nextConfig;
