@@ -37,9 +37,6 @@ const nextConfig: NextConfig = {
       }
     ],
   },
-  experimental: {
-    // This key might be used for other experimental features later.
-  },
   allowedDevOrigins: ["http://10.54.232.1:9003"],
 };
 
