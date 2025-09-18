@@ -6,63 +6,7 @@ import { getFirebaseAdmin } from './firebase-admin';
 import { Student, Teacher, Course, Performance, TimetableEntry, Assignment, LessonVideo, Quiz } from './types';
 
 // Mock data to be seeded
-const students: (Student & { tempPassword?: string })[] = [
-  {
-    id: 's-1',
-    name: 'Ravi Kumar',
-    avatar: 'https://picsum.photos/seed/1/100/100',
-    imageHint: 'student portrait',
-    email: 'ravi.kumar@example.com',
-    class: '10A',
-    attendance: 95,
-    overallScore: 88,
-    tempPassword: 'password123',
-  },
-  {
-    id: 's-2',
-    name: 'Priya Sharma',
-    avatar: 'https://picsum.photos/seed/2/100/100',
-    imageHint: 'student portrait',
-    email: 'priya.sharma@example.com',
-    class: '10A',
-    attendance: 92,
-    overallScore: 91,
-    tempPassword: 'password123',
-  },
-  {
-    id: 's-3',
-    name: 'Amit Singh',
-    avatar: 'https://picsum.photos/seed/3/100/100',
-    imageHint: 'student portrait',
-    email: 'amit.singh@example.com',
-    class: '10A',
-    attendance: 85,
-    overallScore: 78,
-    tempPassword: 'password123',
-  },
-  {
-    id: 's-4',
-    name: 'Sneha Patel',
-    avatar: 'https://picsum.photos/seed/4/100/100',
-    imageHint: 'student portrait',
-    email: 'sneha.patel@example.com',
-    class: '10A',
-    attendance: 98,
-    overallScore: 94,
-    tempPassword: 'password123',
-  },
-  {
-    id: 's-5',
-    name: 'Mohit Verma',
-    avatar: 'https://picsum.photos/seed/5/100/100',
-    imageHint: 'student portrait',
-    email: 'mohit.verma@example.com',
-    class: '10A',
-    attendance: 78,
-    overallScore: 65,
-    tempPassword: 'password123',
-  },
-];
+const students: (Student & { tempPassword?: string })[] = [];
 
 const teachers: Teacher[] = [];
 
