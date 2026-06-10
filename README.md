@@ -7,6 +7,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 
+
+
 GyanSetu is a full-stack digital learning platform designed to bridge educational gaps in rural schools. Built with Next.js, Firebase, and Genkit, this application provides a comprehensive suite of tools for teachers, students, parents, and principals to manage learning, track progress, and foster a collaborative educational environment, even in areas with limited internet connectivity.
 
 The platform leverages AI (via Genkit) to provide insightful performance summaries, helping teachers and parents understand a student's academic journey, highlighting strengths and areas for improvement.
